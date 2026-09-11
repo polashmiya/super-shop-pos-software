@@ -1,0 +1,214 @@
+{
+  "variants": 6,
+  "folders": {
+    "rice": [
+      "sack",
+      "pouch",
+      "grains"
+    ],
+    "flour": [
+      "sack",
+      "pouch",
+      "packet"
+    ],
+    "oil": [
+      "bottle",
+      "jerrycan",
+      "jar",
+      "tin"
+    ],
+    "spices": [
+      "jar",
+      "pouch",
+      "box",
+      "whole"
+    ],
+    "salt-sugar": [
+      "pouch",
+      "packet",
+      "jar"
+    ],
+    "biscuits": [
+      "packet",
+      "box",
+      "tin"
+    ],
+    "snacks": [
+      "chips-bag",
+      "packet",
+      "canister",
+      "nuts"
+    ],
+    "drinks": [
+      "pet-bottle",
+      "can",
+      "glass-bottle",
+      "water-bottle",
+      "tea-box",
+      "coffee-jar"
+    ],
+    "juice": [
+      "carton",
+      "pet-bottle",
+      "tetra-pack"
+    ],
+    "dairy": [
+      "milk-carton",
+      "milk-bottle",
+      "cup",
+      "tub",
+      "powder-tin",
+      "eggs",
+      "butter"
+    ],
+    "frozen": [
+      "box",
+      "bag",
+      "ice-cream-tub",
+      "ice-cream-cone"
+    ],
+    "meat": [
+      "chicken",
+      "meat-cut",
+      "drumstick",
+      "mince"
+    ],
+    "fish": [
+      "fish",
+      "shrimp",
+      "fish-steak",
+      "dried-fish"
+    ],
+    "vegetables": [
+      "potato",
+      "onion",
+      "tomato",
+      "chili",
+      "carrot",
+      "leafy",
+      "eggplant",
+      "gourd",
+      "cauliflower",
+      "pumpkin",
+      "cucumber",
+      "garlic",
+      "ginger",
+      "lemon",
+      "beans"
+    ],
+    "fruits": [
+      "apple",
+      "banana",
+      "orange",
+      "mango",
+      "grapes",
+      "watermelon",
+      "guava",
+      "pineapple",
+      "papaya",
+      "pomegranate",
+      "dates",
+      "lychee",
+      "pear",
+      "coconut",
+      "dragon-fruit"
+    ],
+    "bakery": [
+      "bread",
+      "bun",
+      "cake",
+      "croissant",
+      "toast",
+      "cookies"
+    ],
+    "noodles": [
+      "noodle-pack",
+      "noodle-cup",
+      "pasta",
+      "soup-packet"
+    ],
+    "cosmetics": [
+      "lipstick",
+      "cream-jar",
+      "lotion",
+      "compact",
+      "tube",
+      "hair-oil",
+      "kajal"
+    ],
+    "personal-care": [
+      "soap",
+      "shampoo",
+      "toothpaste",
+      "toothbrush",
+      "deodorant",
+      "razor",
+      "pads",
+      "handwash",
+      "tissue-box",
+      "tissue-roll"
+    ],
+    "baby": [
+      "diapers",
+      "feeder",
+      "formula-tin",
+      "baby-lotion",
+      "wipes",
+      "cereal-box"
+    ],
+    "cleaning": [
+      "detergent-box",
+      "detergent-pouch",
+      "liquid-bottle",
+      "toilet-cleaner",
+      "spray",
+      "dishwash-bar",
+      "mosquito-coil"
+    ],
+    "household": [
+      "bulb",
+      "battery",
+      "candle",
+      "matchbox",
+      "broom",
+      "bucket",
+      "garbage-bag",
+      "foil-roll",
+      "air-freshener"
+    ],
+    "stationery": [
+      "pen",
+      "pencil",
+      "notebook",
+      "paper-ream",
+      "marker",
+      "glue",
+      "calculator",
+      "stapler",
+      "eraser"
+    ],
+    "kitchen": [
+      "frying-pan",
+      "pressure-cooker",
+      "kettle",
+      "rice-cooker",
+      "blender",
+      "knife",
+      "container",
+      "bottle",
+      "glass-set",
+      "spoon-set"
+    ],
+    "others": [
+      "honey-jar",
+      "sauce-bottle",
+      "jam-jar",
+      "cereal-box",
+      "semai",
+      "nuts",
+      "pickle-jar",
+      "jaggery",
+      "puffed-rice"
+    ]
+  }
+}

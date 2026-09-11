@@ -1,0 +1,62 @@
+# electron-builder configuration — Windows (NSIS), macOS (DMG), Linux (AppImage).
+# The product name and version come from package.json ("productName", "version").
+# The icon is build/icon.png (regenerate with `npm run icons`).
+appId: com.supershoppos.desktop
+copyright: Copyright © 2026 Super Shop POS
+
+directories:
+  output: release/${version}
+  buildResources: build
+
+# Only the compiled application is packaged. Production dependencies
+# (electron-store) are added automatically from package.json.
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - package.json
+  - '!**/*.map'
+
+asar: true
+compression: normal
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.png
+  artifactName: ${productName}-Setup-${version}.${ext}
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: ${productName}
+  # The shop database (sales, products, customers) is kept when the app is uninstalled.
+  deleteAppDataOnUninstall: false
+
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: build/icon.png
+  category: public.app-category.business
+  hardenedRuntime: true
+  artifactName: ${productName}-${version}-${arch}.${ext}
+
+dmg:
+  title: ${productName} ${version}
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  icon: build/icon.png
+  category: Office
+  synopsis: Offline supermarket point of sale
+  artifactName: ${productName}-${version}.${ext}

@@ -1,0 +1,237 @@
+/* ==========================================================================
+   DESIGN TOKENS — the single source of every colour, radius, shadow, size
+   and motion value in the UI. Components only use these tokens (through the
+   Tailwind mapping in index.css), so the whole look can be changed here.
+
+   Runtime switches on <html>:
+     class="dark" | "light"         theme (System resolves to one of them)
+     data-contrast="high"           high-contrast mode
+     data-density="compact|comfortable|spacious"
+     data-corners="rounded|standard|minimal"
+     data-motion="off"              animations off
+     data-hover="off"               hover effects off
+   Accent colours (--c-primary*) are applied from src/config/theme.config.ts.
+   ========================================================================== */
+
+:root,
+:root.dark {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --c-bg: #0b0e13;
+  --c-bg-subtle: #0f1319;
+  --c-surface: #141920;
+  --c-surface-2: #1a2029;
+  --c-surface-3: #222a35;
+  --c-image-tile: #1a2029;
+  --c-overlay: rgba(2, 4, 8, 0.68);
+
+  /* Lines */
+  --c-border: #232b36;
+  --c-border-strong: #323d4d;
+
+  /* Text */
+  --c-fg: #e9edf3;
+  --c-fg-muted: #a3adbb;
+  --c-fg-subtle: #717d8f;
+  --c-fg-inverse: #0b0e13;
+
+  /* Accent (default: emerald — overridden at runtime) */
+  --c-primary: #1fbf7c;
+  --c-primary-hover: #2fd18c;
+  --c-primary-fg: #03140c;
+  --c-primary-soft: rgba(31, 191, 124, 0.15);
+  --c-primary-soft-fg: #6ee7b2;
+
+  /* Status */
+  --c-success: #2fbf72;
+  --c-success-fg: #03150b;
+  --c-success-soft: rgba(47, 191, 114, 0.14);
+  --c-success-text: #6fe0a3;
+  --c-warning: #efae2c;
+  --c-warning-fg: #1c1202;
+  --c-warning-soft: rgba(239, 174, 44, 0.14);
+  --c-warning-text: #f6c867;
+  --c-danger: #e5484d;
+  --c-danger-fg: #ffffff;
+  --c-danger-soft: rgba(229, 72, 77, 0.15);
+  --c-danger-text: #ff8d90;
+  --c-info: #4ea2f2;
+  --c-info-fg: #03101d;
+  --c-info-soft: rgba(78, 162, 242, 0.14);
+  --c-info-text: #8fc4f7;
+
+  --c-focus: var(--c-primary);
+
+  /* Charts */
+  /* Validated categorical order (dataviz skill reference palette, dark steps) */
+  --c-chart-1: #3987e5;
+  --c-chart-2: #d95926;
+  --c-chart-3: #199e70;
+  --c-chart-4: #c98500;
+  --c-chart-5: #d55181;
+  --c-chart-6: #008300;
+  --c-chart-7: #9085e9;
+  --c-chart-8: #e66767;
+  --c-chart-grid: rgba(163, 173, 187, 0.14);
+
+  /* Paper (receipt preview) */
+  --c-paper: #ffffff;
+  --c-paper-fg: #111111;
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.38);
+  --shadow-lg: 0 24px 56px rgba(0, 0, 0, 0.55);
+  --shadow-glow: 0 8px 28px color-mix(in srgb, var(--c-primary) 32%, transparent);
+}
+
+:root.light {
+  color-scheme: light;
+
+  --c-bg: #f2f4f7;
+  --c-bg-subtle: #ffffff;
+  --c-surface: #ffffff;
+  --c-surface-2: #f6f7f9;
+  --c-surface-3: #edf0f4;
+  --c-image-tile: #f1f3f7;
+  --c-overlay: rgba(15, 23, 42, 0.42);
+
+  --c-border: #e2e6ec;
+  --c-border-strong: #ccd3dd;
+
+  --c-fg: #101828;
+  --c-fg-muted: #475467;
+  --c-fg-subtle: #697586;
+  --c-fg-inverse: #ffffff;
+
+  --c-primary: #059669;
+  --c-primary-hover: #047857;
+  --c-primary-fg: #ffffff;
+  --c-primary-soft: #e2f5ec;
+  --c-primary-soft-fg: #065f46;
+
+  --c-success: #16a34a;
+  --c-success-fg: #ffffff;
+  --c-success-soft: #e6f6ec;
+  --c-success-text: #15803d;
+  --c-warning: #d97706;
+  --c-warning-fg: #ffffff;
+  --c-warning-soft: #fdf1dd;
+  --c-warning-text: #a15c07;
+  --c-danger: #dc2626;
+  --c-danger-fg: #ffffff;
+  --c-danger-soft: #fdeaea;
+  --c-danger-text: #b42318;
+  --c-info: #2563eb;
+  --c-info-fg: #ffffff;
+  --c-info-soft: #e7eefd;
+  --c-info-text: #1d4ed8;
+
+  --c-chart-1: #2a78d6;
+  --c-chart-2: #eb6834;
+  --c-chart-3: #1baf7a;
+  --c-chart-4: #eda100;
+  --c-chart-5: #e87ba4;
+  --c-chart-6: #008300;
+  --c-chart-7: #4a3aa7;
+  --c-chart-8: #e34948;
+  --c-chart-grid: rgba(71, 84, 103, 0.12);
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 6px 18px rgba(16, 24, 40, 0.08);
+  --shadow-lg: 0 24px 56px rgba(16, 24, 40, 0.18);
+}
+
+/* High contrast: stronger lines and secondary text, more separated surfaces. */
+:root.dark[data-contrast='high'] {
+  --c-bg: #05070a;
+  --c-surface: #10141a;
+  --c-surface-2: #1a2029;
+  --c-border: #4a5566;
+  --c-border-strong: #6b788c;
+  --c-fg: #ffffff;
+  --c-fg-muted: #d3dae4;
+  --c-fg-subtle: #aab4c3;
+}
+
+:root.light[data-contrast='high'] {
+  --c-bg: #ffffff;
+  --c-surface-2: #f2f4f7;
+  --c-border: #8a94a3;
+  --c-border-strong: #5b6474;
+  --c-fg: #000000;
+  --c-fg-muted: #1f2733;
+  --c-fg-subtle: #3a4452;
+}
+
+/* --------------------------------------------------------------------------
+   Layout, density, corners, motion
+   -------------------------------------------------------------------------- */
+
+:root {
+  --font-size-root: 15px;
+  --font-ui: 'Inter Variable', 'Noto Sans Bengali Variable', system-ui, sans-serif;
+  --font-bangla: 'Noto Sans Bengali Variable', 'Nirmala UI', sans-serif;
+  --font-receipt: 'Noto Sans Bengali Variable', 'Nirmala UI', sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, Consolas, monospace;
+
+  --space-unit: 0.25rem;
+  --touch: 48px;
+  --row-h: 46px;
+
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+
+  --sidebar-full: 232px;
+  --sidebar-compact: 76px;
+  --topbar-h: 60px;
+  --statusbar-h: 28px;
+
+  --dur-fast: 110ms;
+  --dur-base: 170ms;
+  --dur-slow: 260ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+[data-density='compact'] {
+  --space-unit: 0.22rem;
+  --touch: 44px;
+  --row-h: 40px;
+}
+
+[data-density='spacious'] {
+  --space-unit: 0.285rem;
+  --touch: 54px;
+  --row-h: 54px;
+}
+
+[data-corners='standard'] {
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 9px;
+  --r-xl: 12px;
+}
+
+[data-corners='minimal'] {
+  --r-sm: 2px;
+  --r-md: 3px;
+  --r-lg: 4px;
+  --r-xl: 6px;
+}
+
+[data-motion='off'] {
+  --dur-fast: 0ms;
+  --dur-base: 0ms;
+  --dur-slow: 0ms;
+}
+
+[data-motion='off'] *,
+[data-motion='off'] *::before,
+[data-motion='off'] *::after {
+  animation-duration: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0ms !important;
+}

@@ -1,0 +1,17 @@
+/* ==========================================================================
+   Bundled fonts (offline — no Google Fonts). Variable fonts where available.
+   Families: see src/config/theme.config.ts (UI_FONTS / BANGLA_FONTS / RECEIPT_FONTS).
+   ========================================================================== */
+
+@import '@fontsource-variable/inter/wght.css';
+@import '@fontsource-variable/noto-sans-bengali/wght.css';
+@import '@fontsource-variable/anek-bangla/wght.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
+@import '@fontsource/hind-siliguri/bengali-400.css';
+@import '@fontsource/hind-siliguri/bengali-500.css';
+@import '@fontsource/hind-siliguri/bengali-600.css';
+@import '@fontsource/hind-siliguri/bengali-700.css';
+@import '@fontsource/hind-siliguri/latin-400.css';
+@import '@fontsource/hind-siliguri/latin-500.css';
+@import '@fontsource/hind-siliguri/latin-600.css';
+@import '@fontsource/hind-siliguri/latin-700.css';

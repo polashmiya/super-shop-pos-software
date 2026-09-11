@@ -1,0 +1,368 @@
+@import 'tailwindcss';
+@import './fonts.css';
+@import './tokens.css';
+
+/* Class-based dark mode (html.dark / html.light). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Hover styles only on hover-capable devices and when hover effects are on. */
+@custom-variant hover {
+  @media (hover: hover) {
+    :root:not([data-hover='off']) &:hover {
+      @slot;
+    }
+  }
+}
+
+/* Cashier focus mode and compact density variants. */
+@custom-variant focus-mode (&:where([data-focus-mode='on'], [data-focus-mode='on'] *));
+@custom-variant compact (&:where([data-density='compact'], [data-density='compact'] *));
+
+/*
+ * Map the design tokens onto Tailwind. The default palette is removed on
+ * purpose: every colour in the UI must come from tokens.css.
+ */
+@theme inline {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-bg: var(--c-bg);
+  --color-bg-subtle: var(--c-bg-subtle);
+  --color-surface: var(--c-surface);
+  --color-surface-2: var(--c-surface-2);
+  --color-surface-3: var(--c-surface-3);
+  --color-image-tile: var(--c-image-tile);
+  --color-overlay: var(--c-overlay);
+
+  --color-border: var(--c-border);
+  --color-border-strong: var(--c-border-strong);
+
+  --color-fg: var(--c-fg);
+  --color-fg-muted: var(--c-fg-muted);
+  --color-fg-subtle: var(--c-fg-subtle);
+  --color-fg-inverse: var(--c-fg-inverse);
+
+  --color-primary: var(--c-primary);
+  --color-primary-hover: var(--c-primary-hover);
+  --color-primary-fg: var(--c-primary-fg);
+  --color-primary-soft: var(--c-primary-soft);
+  --color-primary-soft-fg: var(--c-primary-soft-fg);
+
+  --color-success: var(--c-success);
+  --color-success-fg: var(--c-success-fg);
+  --color-success-soft: var(--c-success-soft);
+  --color-success-text: var(--c-success-text);
+  --color-warning: var(--c-warning);
+  --color-warning-fg: var(--c-warning-fg);
+  --color-warning-soft: var(--c-warning-soft);
+  --color-warning-text: var(--c-warning-text);
+  --color-danger: var(--c-danger);
+  --color-danger-fg: var(--c-danger-fg);
+  --color-danger-soft: var(--c-danger-soft);
+  --color-danger-text: var(--c-danger-text);
+  --color-info: var(--c-info);
+  --color-info-fg: var(--c-info-fg);
+  --color-info-soft: var(--c-info-soft);
+  --color-info-text: var(--c-info-text);
+
+  --color-focus: var(--c-focus);
+  --color-paper: var(--c-paper);
+  --color-paper-fg: var(--c-paper-fg);
+
+  --color-chart-1: var(--c-chart-1);
+  --color-chart-2: var(--c-chart-2);
+  --color-chart-3: var(--c-chart-3);
+  --color-chart-4: var(--c-chart-4);
+  --color-chart-5: var(--c-chart-5);
+  --color-chart-6: var(--c-chart-6);
+  --color-chart-7: var(--c-chart-7);
+  --color-chart-8: var(--c-chart-8);
+  --color-chart-grid: var(--c-chart-grid);
+
+  --font-sans: var(--font-ui);
+  --font-bangla: var(--font-bangla);
+  --font-mono: var(--font-mono);
+  --font-receipt: var(--font-receipt);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-xl: var(--r-xl);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-glow: var(--shadow-glow);
+
+  --spacing: var(--space-unit);
+  --spacing-touch: var(--touch);
+  --spacing-row: var(--row-h);
+  --spacing-sidebar: var(--sidebar-full);
+  --spacing-sidebar-compact: var(--sidebar-compact);
+  --spacing-topbar: var(--topbar-h);
+  --spacing-statusbar: var(--statusbar-h);
+
+  --ease-out: var(--ease-out);
+  --animate-fade-in: fade-in var(--dur-base) var(--ease-out);
+  --animate-pop-in: pop-in var(--dur-base) var(--ease-out);
+  --animate-slide-up: slide-up var(--dur-base) var(--ease-out);
+  --animate-slide-in-right: slide-in-right var(--dur-slow) var(--ease-out);
+  --animate-flash: flash 650ms var(--ease-out);
+  --animate-bump: bump 220ms var(--ease-out);
+  --animate-check: check-draw 420ms var(--ease-out) forwards;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes flash {
+  0% {
+    background-color: var(--c-primary-soft);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes loading-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+@keyframes check-draw {
+  from {
+    stroke-dashoffset: 48;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Typography tokens (spec §119)
+   -------------------------------------------------------------------------- */
+
+@utility type-display {
+  font-size: 2rem;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+@utility type-h1 {
+  font-size: 1.5rem;
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+@utility type-h2 {
+  font-size: 1.2rem;
+  line-height: 1.3;
+  font-weight: 650;
+}
+@utility type-h3 {
+  font-size: 1.02rem;
+  line-height: 1.35;
+  font-weight: 600;
+}
+@utility type-body {
+  font-size: 0.94rem;
+  line-height: 1.5;
+}
+@utility type-body-sm {
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+@utility type-label {
+  font-size: 0.82rem;
+  line-height: 1.3;
+  font-weight: 550;
+}
+@utility type-caption {
+  font-size: 0.74rem;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+@utility type-price {
+  font-size: 1rem;
+  line-height: 1.2;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+@utility type-total {
+  font-size: 2rem;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+@utility type-receipt {
+  font-family: var(--font-receipt);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    font-size: var(--font-size-root);
+    font-family: var(--font-ui);
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    accent-color: var(--c-primary);
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--c-primary) 36%, transparent);
+  }
+
+  body {
+    margin: 0;
+    overflow: hidden;
+    background-color: var(--c-bg);
+    color: var(--c-fg);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+
+  /* Bangla glyphs have tall vowel signs; give them more room. */
+  html[lang='bn'] body {
+    line-height: 1.6;
+  }
+
+  input,
+  textarea,
+  [contenteditable='true'],
+  .selectable {
+    user-select: text;
+  }
+
+  button,
+  [role='button'] {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--c-border-strong);
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--c-fg-subtle);
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+  .transition-base {
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-duration: var(--dur-fast);
+    transition-timing-function: var(--ease-out);
+  }
+}

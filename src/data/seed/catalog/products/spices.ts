@@ -1,0 +1,93 @@
+// Powder spice lines: turmeric, chili, coriander, cumin, garam masala and pepper.
+import type { CatalogLine } from '../types';
+
+export const LINES: CatalogLine[] = [
+  {
+    category: 'spices',
+    subcategory: 'powder-spices',
+    brands: ['radhuni', 'pran', 'aci-pure', 'bd-foods', 'fresh'],
+    name: { en: 'Turmeric Powder', bn: 'হলুদ গুঁড়া' },
+    description: { en: 'Bright, pure turmeric for everyday curries.', bn: 'প্রতিদিনের তরকারির জন্য খাঁটি হলুদ গুঁড়া।' },
+    sizes: [
+      { en: '100 g', bn: '১০০ গ্রাম', price: 55 },
+      { en: '200 g', bn: '২০০ গ্রাম', price: 105, mrp: 110 },
+      { en: '500 g', bn: '৫০০ গ্রাম', price: 250, mrp: 265 },
+    ],
+    unit: 'pouch',
+    art: 'spices/pouch',
+    popularity: 8,
+    featured: true,
+    promo: { type: 'percent', value: 10 },
+  },
+  {
+    category: 'spices',
+    subcategory: 'powder-spices',
+    brands: ['radhuni', 'pran', 'aci-pure', 'bd-foods', 'fresh'],
+    name: { en: 'Chili Powder', bn: 'মরিচ গুঁড়া' },
+    description: { en: 'Hot red chili powder with natural colour.', bn: 'প্রাকৃতিক রঙের ঝাল মরিচ গুঁড়া।' },
+    sizes: [
+      { en: '100 g', bn: '১০০ গ্রাম', price: 65 },
+      { en: '200 g', bn: '২০০ গ্রাম', price: 125, mrp: 130 },
+      { en: '500 g', bn: '৫০০ গ্রাম', price: 300 },
+    ],
+    unit: 'pouch',
+    art: 'spices/pouch',
+    popularity: 8,
+  },
+  {
+    category: 'spices',
+    subcategory: 'powder-spices',
+    brands: ['radhuni', 'pran', 'aci-pure', 'bd-foods'],
+    name: { en: 'Coriander Powder', bn: 'ধনিয়া গুঁড়া' },
+    description: { en: 'Mild, aromatic coriander for curries.', bn: 'তরকারির জন্য সুগন্ধি ধনিয়া গুঁড়া।' },
+    sizes: [
+      { en: '100 g', bn: '১০০ গ্রাম', price: 45, mrp: 46 },
+      { en: '200 g', bn: '২০০ গ্রাম', price: 85 },
+    ],
+    unit: 'pouch',
+    art: 'spices/pouch',
+    popularity: 7,
+  },
+  {
+    category: 'spices',
+    subcategory: 'powder-spices',
+    brands: ['radhuni', 'pran', 'aci-pure', 'bd-foods'],
+    name: { en: 'Cumin Powder', bn: 'জিরা গুঁড়া' },
+    description: { en: 'Roasted cumin aroma for bhuna and borhani.', bn: 'ভুনা ও বোরহানির জন্য সুগন্ধি জিরা গুঁড়া।' },
+    sizes: [
+      { en: '50 g', bn: '৫০ গ্রাম', price: 65 },
+      { en: '100 g', bn: '১০০ গ্রাম', price: 125, mrp: 130 },
+    ],
+    unit: 'pouch',
+    art: 'spices/pouch',
+    popularity: 7,
+    promo: { type: 'percent', value: 10 },
+  },
+  {
+    category: 'spices',
+    subcategory: 'powder-spices',
+    brands: ['radhuni', 'pran', 'aci-pure'],
+    name: { en: 'Garam Masala Powder', bn: 'গরম মসলা গুঁড়া' },
+    description: { en: 'Warm spice blend to finish meat dishes.', bn: 'মাংস রান্নার শেষে দেওয়ার গরম মসলা।' },
+    sizes: [
+      { en: '15 g', bn: '১৫ গ্রাম', price: 32 },
+      { en: '50 g', bn: '৫০ গ্রাম', price: 95 },
+    ],
+    unit: 'box',
+    art: 'spices/box',
+    popularity: 6,
+  },
+  {
+    category: 'spices',
+    subcategory: 'powder-spices',
+    brands: ['radhuni', 'aci-pure'],
+    name: { en: 'Black Pepper Powder', bn: 'গোলমরিচ গুঁড়া' },
+    description: { en: 'Freshly ground black pepper in a shaker jar.', bn: 'শেকার জারে তাজা গোলমরিচ গুঁড়া।' },
+    sizes: [
+      { en: '50 g', bn: '৫০ গ্রাম', price: 95 },
+    ],
+    unit: 'jar',
+    art: 'spices/jar',
+    popularity: 4,
+  },
+];
