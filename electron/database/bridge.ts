@@ -1,6 +1,7 @@
 import type { DatabaseSync, StatementSync } from 'node:sqlite';
-import type { SqlErrorCode, SqlRow, SqlRunResult, SqlStatement, SqlTransactionResult, SqlValue } from '../../src/types/database';
-import { DEFAULT_GUARD_LIMITS, SqlRejectedError, assertSafeParams, assertSafeSql, assertSafeStatements, type SqlGuardLimits } from './sqlGuard';
+import type { SqlRow, SqlRunResult, SqlStatement, SqlTransactionResult, SqlValue } from '@/types/database';
+import { DEFAULT_GUARD_LIMITS, assertSafeParams, assertSafeSql, assertSafeStatements, type SqlGuardLimits } from '@/data/schema/sqlGuard';
+import { classifySqlError, SQL_ERROR_PREFIX, toBridgeError } from '@/data/schema/sqlErrors';
 
 /* ==========================================================================
    SQL bridge: executes validated statements against node:sqlite with a
@@ -8,26 +9,7 @@ import { DEFAULT_GUARD_LIMITS, SqlRejectedError, assertSafeParams, assertSafeSql
    and, in tests, directly (same semantics as production).
    ========================================================================== */
 
-/** Error message prefix understood by the renderer's SQL client. */
-export const SQL_ERROR_PREFIX = 'SQL_ERROR';
-
-export function classifySqlError(error: unknown): { code: SqlErrorCode; detail: string } {
-  if (error instanceof SqlRejectedError) return { code: 'rejected', detail: error.message };
-  const message = error instanceof Error ? error.message : String(error);
-  const unique = /UNIQUE constraint failed: ([\w.]+(?:, [\w.]+)*)/i.exec(message);
-  if (unique) return { code: 'constraint_unique', detail: unique[1] };
-  if (/FOREIGN KEY constraint failed/i.test(message)) return { code: 'constraint_foreign_key', detail: '' };
-  const check = /CHECK constraint failed: (.+)$/i.exec(message);
-  if (check) return { code: 'constraint_check', detail: check[1] };
-  if (/database is locked|SQLITE_BUSY/i.test(message)) return { code: 'busy', detail: '' };
-  return { code: 'failed', detail: '' };
-}
-
-/** Error with a stable, parseable message: SQL_ERROR|code|detail. */
-export function toBridgeError(error: unknown): Error {
-  const { code, detail } = classifySqlError(error);
-  return new Error(`${SQL_ERROR_PREFIX}|${code}|${detail}`);
-}
+export { classifySqlError, SQL_ERROR_PREFIX, toBridgeError };
 
 function toRunResult(result: { changes: number | bigint; lastInsertRowid: number | bigint }): SqlRunResult {
   return { changes: Number(result.changes), lastInsertRowid: Number(result.lastInsertRowid) };

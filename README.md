@@ -1,8 +1,9 @@
 # Super Shop POS
 
-Offline-first **supermarket point of sale** for Bangladeshi retail — a desktop app for Windows,
-macOS and Linux. Bangla is the default language (English is one click away), everything runs on
-the shop computer with a local SQLite database, and no internet connection is ever needed.
+Offline-first **supermarket point of sale** for Bangladeshi retail. It runs two ways from one
+codebase: as a **desktop app** for Windows, macOS and Linux, and as a **web app** you can open in
+a browser. Bangla is the default language (English is one click away), everything runs on the
+shop's own machine with a local SQLite database, and no internet connection is ever needed.
 
 > বাংলা: এটি একটি সম্পূর্ণ অফলাইন সুপারশপ পিওএস সফটওয়্যার। বারকোড স্ক্যান করে বিক্রি, ভ্যাট,
 > নগদ/কার্ড/বিকাশ/নগদ/রকেট পেমেন্ট, রিটার্ন, স্টক, ক্রয়, সরবরাহকারী, শিফট ও ক্যাশ, খরচ,
@@ -69,6 +70,8 @@ Change the PINs in **Settings → Users** before using the app in a real shop, a
 - Node.js 22.12 or newer (for development and building only — the installed app bundles its own
   runtime).
 - Windows 10/11, macOS 12+, or a modern Linux desktop.
+- For the web version: a current Chrome, Edge, Firefox or Safari, served over HTTPS (or
+  localhost).
 
 ## Run and build
 
@@ -84,10 +87,40 @@ npm run dist:mac     # macOS DMG (build on a Mac)
 npm run dist:linux   # Linux AppImage
 npm run build:electron  # unpacked app folder (quick local check)
 npm run shots        # after a build: screenshots of every screen → screenshots/
+
+npm run build:web    # web build → dist-web/ (a plain static site)
+npm run preview:web  # try the web build at http://localhost:5184
 ```
 
 If `npm install` could not download Electron (offline or proxy), run
 `node node_modules/electron/install.js` once you are online again.
+
+## The web version
+
+`npm run build:web` produces `dist-web/`, a static site with no server and no database to run.
+Everything the desktop app does is there — selling, payments, returns, inventory, purchases,
+shifts, all 25 reports, the settings centre — because it is the same application. SQLite is
+compiled to WebAssembly and runs inside the page, storing the shop in the browser's own private
+storage (OPFS).
+
+Deploying to **Vercel**: `vercel.json` is already set up, so importing the repository is enough —
+it builds with `npm run build:web` and publishes `dist-web`. Netlify, GitHub Pages, Cloudflare
+Pages or any web server work the same way; the app uses hash routing, so no URL rewrites are
+needed. Serve it over **HTTPS** (or `localhost`), which browsers require for the storage it uses.
+
+Two things to know before using it for a real shop:
+
+- **Each browser holds its own shop.** The web version and the desktop app do not share data, and
+  neither do two different computers or two different browsers. Backups move data between them:
+  **Settings → Data → Export backup** downloads a file that **Import backup** restores on the
+  other side.
+- **Printing goes through the browser's print dialog**, which is where the printer, the paper size
+  and the number of copies are chosen — a web page is not allowed to print silently to a named
+  printer the way the desktop app does. "Save as PDF" is a destination in that same dialog.
+
+If a browser refuses to store data (a private window, or an older browser), the app still runs but
+the status bar shows **"Not being saved"** and everything is lost when the tab closes. Export a
+backup before finishing, or use the desktop app.
 
 ## Keyboard shortcuts
 
@@ -106,6 +139,8 @@ All shortcuts can be changed in **Settings → Keyboard shortcuts**.
 
 ## Where data is stored
 
+### Desktop app
+
 Everything stays on this computer, in the app data folder
 (`%APPDATA%\Super Shop POS` on Windows, `~/Library/Application Support/Super Shop POS` on macOS,
 `~/.config/Super Shop POS` on Linux):
@@ -116,6 +151,13 @@ Everything stays on this computer, in the app data folder
 | `config.json` | Settings for this computer (theme, language, printer, counter) |
 | `backups/` | Automatic safety copies made before a reset or import |
 | `logs/main.log` | Diagnostic log |
+
+### Web version
+
+Nothing is uploaded here either. The database lives in the browser's private storage (OPFS) for
+that site, and the settings for this device in `localStorage`. Clearing the browser's site data
+erases the shop, so take a backup first (**Settings → Data → Export backup**). Exports and
+backups are ordinary downloads, and imports read a file you pick.
 
 **Backups:** Settings → Data → *Back up now* saves one JSON file with all shop data. *Import
 backup* checks the file, shows what it contains and asks for confirmation before replacing data.

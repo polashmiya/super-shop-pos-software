@@ -1,6 +1,7 @@
 import { memo } from 'react';
-import { Database, HardDriveDownload, Keyboard, User, WifiOff } from 'lucide-react';
+import { Database, HardDriveDownload, Keyboard, TriangleAlert, User, WifiOff } from 'lucide-react';
 import { APP_CONFIG } from '@/config/app.config';
+import { isStoragePersistent } from '@/platform';
 import { displayCombo } from '@/app/shortcuts';
 import { useFormat } from '@/hooks/useFormat';
 import { useT } from '@/i18n';
@@ -28,6 +29,7 @@ export const StatusBar = memo(function StatusBar() {
   const shortcut = useSettingsStore((state) => state.device.shortcuts.showShortcuts);
   const setShortcutsOpen = useUiStore((state) => state.setShortcutsOpen);
   const healthy = catalogStatus !== 'error';
+  const persistent = isStoragePersistent();
 
   const item = 'flex items-center gap-1.5 whitespace-nowrap';
   return (
@@ -40,6 +42,12 @@ export const StatusBar = memo(function StatusBar() {
         <Database size={13} aria-hidden />
         {healthy ? t('shell.statusbar.database') : t('shell.statusbar.databaseError')}
       </span>
+      {!persistent && (
+        <span className={cn(item, 'text-warning-text')} title={t('shell.statusbar.notSavedHint')}>
+          <TriangleAlert size={13} aria-hidden />
+          {t('shell.statusbar.notSaved')}
+        </span>
+      )}
       {counter && <span className={item}>{language === 'bn' ? counter.name.bn : counter.name.en}</span>}
       {user && (
         <span className={item}>

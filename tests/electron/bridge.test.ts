@@ -2,14 +2,14 @@
 import { DatabaseSync } from 'node:sqlite';
 import { describe, expect, it } from 'vitest';
 import { classifySqlError, SQL_ERROR_PREFIX, SqlBridge, toBridgeError } from '../../electron/database/bridge';
-import { configureConnection, migrate } from '../../electron/database/migrations';
-import { SqlRejectedError } from '../../electron/database/sqlGuard';
+import { configureConnection, migrate } from '@/data/schema/migrations';
+import { SqlRejectedError } from '@/data/schema/sqlGuard';
 import { parseBridgeError, SqlError } from '@/repositories/local/sql';
 import { createTestDatabase } from '../helpers/db';
 
 function migratedBridge(cacheSize?: number): { db: DatabaseSync; bridge: SqlBridge } {
   const db = new DatabaseSync(':memory:', { enableForeignKeyConstraints: true });
-  configureConnection(db, { inMemory: true });
+  configureConnection(db, { wal: false });
   migrate(db);
   return { db, bridge: cacheSize === undefined ? new SqlBridge(db) : new SqlBridge(db, undefined, cacheSize) };
 }

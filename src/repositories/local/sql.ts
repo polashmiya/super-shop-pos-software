@@ -1,4 +1,4 @@
-import type { ElectronAPI } from '@/platform/electron';
+import type { ElectronAPI } from '@/platform';
 import type { SqlClient, SqlErrorCode, SqlRow, SqlStatement, SqlValue } from '@/types/database';
 
 /* ==========================================================================

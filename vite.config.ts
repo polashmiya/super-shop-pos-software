@@ -35,20 +35,24 @@ const alias = { '@': path.join(rootDir, 'src') };
  * React Fast Refresh, so the policy is injected into built HTML only (the
  * main process applies an equivalent header during development).
  */
-const PRODUCTION_CSP = [
-  "default-src 'self'",
-  "script-src 'self'",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
-  "font-src 'self' data:",
-  "connect-src 'self'",
-  "media-src 'self' data:",
-  "object-src 'none'",
-  "base-uri 'none'",
-  "form-action 'none'",
-].join('; ');
+function productionCsp(web: boolean): string {
+  return [
+    "default-src 'self'",
+    // The browser build compiles SQLite from WebAssembly and runs it in a worker.
+    web ? "script-src 'self' 'wasm-unsafe-eval'" : "script-src 'self'",
+    web ? "worker-src 'self' blob:" : "worker-src 'self'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "font-src 'self' data:",
+    "connect-src 'self'",
+    "media-src 'self' data:",
+    "object-src 'none'",
+    "base-uri 'none'",
+    "form-action 'none'",
+  ].join('; ');
+}
 
-function appHtml(): Plugin {
+function appHtml(web: boolean): Plugin {
   return {
     name: 'super-shop-pos:html',
     transformIndexHtml: {
@@ -58,15 +62,21 @@ function appHtml(): Plugin {
         if (ctx.server) return withTitle;
         return withTitle.replace(
           '<meta charset="UTF-8" />',
-          `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${PRODUCTION_CSP}" />`,
+          `<meta charset="UTF-8" />\n    <meta http-equiv="Content-Security-Policy" content="${productionCsp(web)}" />`,
         );
       },
     },
   };
 }
 
-export default defineConfig(({ command }) => {
+export default defineConfig(({ command, mode }) => {
   const isServe = command === 'serve';
+  /**
+   * `vite build --mode web` produces the browser build: no Electron main or
+   * preload process, SQLite compiled to WebAssembly instead of node:sqlite,
+   * and a plain static site that any host can serve.
+   */
+  const isWeb = mode === 'web';
 
   return {
     base: './',
@@ -77,15 +87,20 @@ export default defineConfig(({ command }) => {
       strictPort: true,
     },
     build: {
-      outDir: 'dist',
+      outDir: isWeb ? 'dist-web' : 'dist',
       emptyOutDir: true,
       chunkSizeWarningLimit: 1500,
+      target: 'es2022',
     },
+    // sqlite-wasm ships its own .wasm next to the module; pre-bundling it
+    // breaks that lookup.
+    optimizeDeps: { exclude: ['@sqlite.org/sqlite-wasm'] },
+    worker: { format: 'es' },
     plugins: [
       react(),
       tailwindcss(),
-      appHtml(),
-      electron({
+      appHtml(isWeb),
+      ...(isWeb ? [] : [electron({
         main: {
           entry: 'electron/main/index.ts',
           // Keep the Chromium sandbox enabled in development (the plugin
@@ -128,7 +143,7 @@ export default defineConfig(({ command }) => {
             },
           },
         },
-      }),
+      })]),
     ],
   };
 });

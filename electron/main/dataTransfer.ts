@@ -5,7 +5,8 @@ import { app, dialog } from 'electron';
 import { APP_CONFIG } from '@/config/app.config';
 import { toLocalDate } from '@/domain/dates';
 import type { ExportResult, ImportPickResult, SaveFileKind } from '@/types/print';
-import { getSchemaVersion, DATA_TABLES } from '../database/migrations';
+import { getSchemaVersion } from '@/data/schema/migrations';
+import { parseBackup, previewCounts, type BackupFile } from '@/data/schema/backupFile';
 import { getDatabase, readAllTables, replaceAllTables } from '../database/connection';
 import { readDevice, writeDevice } from './deviceStore';
 import { safeFileName, writeFileAtomic } from './files';
@@ -18,16 +19,6 @@ import { getMainWindow } from './windowManager';
    are written only where the user chooses, plus a safety copy in
    <userData>/backups before any destructive action.
    ========================================================================== */
-
-interface BackupFile {
-  format: string;
-  appName: string;
-  appVersion: string;
-  schemaVersion: number;
-  exportedAt: string;
-  device: unknown;
-  tables: Record<string, unknown[]>;
-}
 
 const pendingImports = new Map<string, { backup: BackupFile; expiresAt: number }>();
 const IMPORT_CONFIRM_TTL_MS = 10 * 60_000;
@@ -110,29 +101,6 @@ export async function exportBackup(): Promise<ExportResult> {
   }
 }
 
-type ParsedBackup = { ok: true; backup: BackupFile } | { ok: false; reason: 'invalid' | 'newer-schema' };
-
-/** Validates the structure of a backup file before anything is replaced. */
-function parseBackup(json: unknown, currentSchema: number): ParsedBackup {
-  if (typeof json !== 'object' || json === null) return { ok: false, reason: 'invalid' };
-  const candidate = json as Partial<BackupFile>;
-  if (candidate.format !== APP_CONFIG.backup.format) return { ok: false, reason: 'invalid' };
-  if (typeof candidate.schemaVersion !== 'number' || typeof candidate.exportedAt !== 'string') return { ok: false, reason: 'invalid' };
-  if (candidate.schemaVersion > currentSchema) return { ok: false, reason: 'newer-schema' };
-  if (typeof candidate.tables !== 'object' || candidate.tables === null) return { ok: false, reason: 'invalid' };
-  const tables = candidate.tables as Record<string, unknown>;
-  for (const required of ['users', 'roles', 'products', 'categories', 'units', 'settings']) {
-    if (!Array.isArray(tables[required])) return { ok: false, reason: 'invalid' };
-  }
-  for (const [name, rows] of Object.entries(tables)) {
-    if (!(DATA_TABLES as readonly string[]).includes(name)) return { ok: false, reason: 'invalid' };
-    if (!Array.isArray(rows) || rows.some((row) => typeof row !== 'object' || row === null || Array.isArray(row))) return { ok: false, reason: 'invalid' };
-  }
-  const users = tables.users as Array<Record<string, unknown>>;
-  if (users.length === 0 || users.some((user) => typeof user.id !== 'string' || typeof user.pin_hash !== 'string')) return { ok: false, reason: 'invalid' };
-  return { ok: true, backup: candidate as BackupFile };
-}
-
 /** Lets the user pick a backup and validates it WITHOUT applying it yet. */
 export async function pickImport(): Promise<ImportPickResult> {
   const window = getMainWindow();
@@ -156,10 +124,7 @@ export async function pickImport(): Promise<ImportPickResult> {
     }
     const token = randomUUID();
     pendingImports.set(token, { backup: parsed.backup, expiresAt: Date.now() + IMPORT_CONFIRM_TTL_MS });
-    const counts: Record<string, number> = {};
-    for (const table of ['products', 'customers', 'sales', 'suppliers', 'purchases', 'cash_sessions']) {
-      counts[table] = parsed.backup.tables[table]?.length ?? 0;
-    }
+    const counts = previewCounts(parsed.backup);
     return {
       ok: true,
       preview: {

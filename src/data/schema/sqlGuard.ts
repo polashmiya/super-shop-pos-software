@@ -1,7 +1,10 @@
-import type { SqlStatement, SqlValue } from '../../src/types/database';
+import type { SqlStatement, SqlValue } from '@/types/database';
 
 /* ==========================================================================
    Validation for SQL arriving from the renderer (defence in depth).
+
+   Shared by both runtimes so the desktop app and the browser build accept
+   and reject exactly the same statements.
 
    The renderer's local repositories may only run single data statements
    (SELECT / INSERT / UPDATE / DELETE / WITH / REPLACE) with positional,
@@ -53,6 +56,11 @@ export function assertSafeSql(sql: unknown, limits: SqlGuardLimits = DEFAULT_GUA
   if (FORBIDDEN_WORDS.test(code)) throw new SqlRejectedError('forbidden keyword');
 }
 
+/** UTF-8 byte length without Node's Buffer (this module runs in the browser too). */
+function utf8Bytes(value: string): number {
+  return new TextEncoder().encode(value).length;
+}
+
 export function assertSafeParams(params: unknown, limits: SqlGuardLimits = DEFAULT_GUARD_LIMITS): asserts params is SqlValue[] {
   if (params === undefined) return;
   if (!Array.isArray(params)) throw new SqlRejectedError('parameters must be an array');
@@ -64,7 +72,7 @@ export function assertSafeParams(params: unknown, limits: SqlGuardLimits = DEFAU
       continue;
     }
     if (typeof value === 'string') {
-      if (value.length * 3 > limits.maxStringBytes && Buffer.byteLength(value, 'utf-8') > limits.maxStringBytes) {
+      if (value.length * 3 > limits.maxStringBytes && utf8Bytes(value) > limits.maxStringBytes) {
         throw new SqlRejectedError('string parameter too large');
       }
       continue;

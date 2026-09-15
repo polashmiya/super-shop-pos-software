@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { DatabaseSync } from 'node:sqlite';
 import { SqlBridge, toBridgeError } from '../../electron/database/bridge';
 import { createSyncExecutor } from '../../electron/database/executor';
-import { configureConnection, migrate } from '../../electron/database/migrations';
+import { configureConnection, migrate } from '@/data/schema/migrations';
 import { extendDemoData, seedDatabase, type SeedSummary } from '@/data/seed';
 import { parseBridgeError } from '@/repositories/local/sql';
 import type { SqlClient, SqlRow, SqlStatement, SqlValue } from '@/types/database';
@@ -35,7 +35,7 @@ function wrap<T>(work: () => T): Promise<T> {
 
 export function createTestDatabase(options: { seed?: 'demo' | 'empty' | 'none'; now?: Date } = {}): TestDatabase {
   const db = new DatabaseSync(':memory:', { enableForeignKeyConstraints: true });
-  configureConnection(db, { inMemory: true });
+  configureConnection(db, { wal: false });
   migrate(db);
   let summary: SeedSummary | null = null;
   if (options.seed && options.seed !== 'none') {

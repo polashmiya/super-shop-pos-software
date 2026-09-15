@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import { assertSafeParams, assertSafeSql, assertSafeStatements, DEFAULT_GUARD_LIMITS, SqlRejectedError, type SqlGuardLimits } from '../../electron/database/sqlGuard';
+import { assertSafeParams, assertSafeSql, assertSafeStatements, DEFAULT_GUARD_LIMITS, SqlRejectedError, type SqlGuardLimits } from '@/data/schema/sqlGuard';
 
 function rejection(work: () => void): string {
   try {

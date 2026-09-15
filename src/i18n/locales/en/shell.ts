@@ -54,6 +54,8 @@ export const shell = {
     databaseError: 'Database problem',
     lastBackup: 'Last backup: {time}',
     neverBackedUp: 'No backup yet',
+    notSaved: 'Not being saved',
+    notSavedHint: 'This browser cannot store data, so the shop is lost when the tab is closed. Export a backup before you finish, or use the desktop app.',
     version: 'v{version}',
     shortcuts: 'Shortcuts',
   },

@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { cartTotals } from '@/services/pricingService';
 import { cancelSale, canCancel, completeSale, getSale } from '@/services/saleService';

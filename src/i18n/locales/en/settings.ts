@@ -368,6 +368,7 @@ export const settings = {
     refresh: 'Refresh list',
     noPrinters: 'No printers found. Install the printer driver, then refresh.',
     desktopOnly: 'The printer list is available in the desktop app.',
+    browserPrinting: 'Printer, paper size and copies are chosen in the print dialog the browser opens. Pick "Save as PDF" there to keep a copy.',
     printing: 'Printing',
     printingHint: 'How receipts are sent to the printer',
     silent: 'Silent printing',

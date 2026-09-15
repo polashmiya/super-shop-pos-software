@@ -56,6 +56,8 @@ export const shell: DeepStringify<typeof enShell> = {
     databaseError: 'ডাটাবেসে সমস্যা',
     lastBackup: 'সর্বশেষ ব্যাকআপ: {time}',
     neverBackedUp: 'এখনো ব্যাকআপ নেওয়া হয়নি',
+    notSaved: 'সংরক্ষিত হচ্ছে না',
+    notSavedHint: 'এই ব্রাউজারে তথ্য জমা রাখা যাচ্ছে না, তাই ট্যাব বন্ধ করলে সব মুছে যাবে। শেষ করার আগে ব্যাকআপ নিন, অথবা ডেস্কটপ অ্যাপ ব্যবহার করুন।',
     version: 'সংস্করণ {version}',
     shortcuts: 'শর্টকাট',
   },

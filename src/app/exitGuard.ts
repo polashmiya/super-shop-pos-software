@@ -1,5 +1,5 @@
 import { t } from '@/i18n';
-import { getElectronAPI, hasElectronAPI } from '@/platform/electron';
+import { getPlatformAPI, isDesktop } from '@/platform';
 import { useAuthStore } from '@/stores/authStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { confirmAction } from '@/stores/uiStore';
@@ -24,13 +24,13 @@ export function installExitGuard(flushPending: () => void): void {
   window.addEventListener('beforeunload', (event) => {
     flushPending();
     const askFirst = useSettingsStore.getState().device.general.confirmExit && useAuthStore.getState().user !== null;
-    if (confirmed || !askFirst || !hasElectronAPI()) return;
+    if (confirmed || !askFirst || !isDesktop()) return;
     event.preventDefault();
     event.returnValue = '';
     void confirmAction({ title: t('shell.exit.title'), message: t('shell.exit.message'), confirmLabel: t('shell.exit.confirm'), tone: 'danger' }).then((ok) => {
       if (!ok) return;
       confirmed = true;
-      void getElectronAPI().app.quit();
+      void getPlatformAPI().app.quit();
     });
   });
 }

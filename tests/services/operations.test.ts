@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { toLocalDate } from '@/domain/dates';
 import { authService } from '@/services/authService';

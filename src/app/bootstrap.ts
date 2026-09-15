@@ -1,5 +1,6 @@
 import { APP_CONFIG } from '@/config/app.config';
-import { getElectronAPI, hasElectronAPI } from '@/platform/electron';
+import { detectDesktopAPI, getPlatformAPI, installPlatform, isDesktop, setStoragePersistent } from '@/platform';
+import { createWebPlatform } from '@/platform/web';
 import { setRepositories } from '@/repositories';
 import { createIpcSqlClient, createLocalRepositories } from '@/repositories/local';
 import type { DeviceStorage } from '@/repositories/types';
@@ -19,13 +20,14 @@ import { installExitGuard } from './exitGuard';
 
 /* ==========================================================================
    Application start-up:
-   repositories (local SQLite via IPC) → service context → settings →
+   platform bridge (Electron preload, or the browser build) → repositories
+   (local SQLite, over IPC or in the WASM worker) → service context → settings →
    appearance → catalogue → shift → notifications. Also keeps derived state
    in sync (appearance, native theme, POS draft persistence).
    ========================================================================== */
 
 function deviceStorage(): DeviceStorage {
-  const store = getElectronAPI().store;
+  const store = getPlatformAPI().store;
   return {
     get: async <T>(key: 'device' | 'session' | 'posDraft') => (await store.get(key)) as T | undefined,
     set: (key, value) => store.set(key, value as never),
@@ -34,8 +36,28 @@ function deviceStorage(): DeviceStorage {
 }
 
 export function installLocalDataSource(): void {
-  const api = getElectronAPI();
+  const api = getPlatformAPI();
   setRepositories(createLocalRepositories(createIpcSqlClient(api.database), deviceStorage()));
+}
+
+/**
+ * Chooses the runtime: the Electron preload bridge when the app runs on the
+ * desktop, otherwise the browser build, whose database has to be opened (and
+ * on a first visit seeded) before anything can query it.
+ */
+async function installPlatformBridge(): Promise<void> {
+  const desktop = detectDesktopAPI();
+  if (desktop) {
+    installPlatform(desktop, 'desktop');
+    return;
+  }
+  const web = createWebPlatform();
+  installPlatform(web.api, 'web');
+  const opened = await web.start();
+  setStoragePersistent(opened.persistent);
+  if (!opened.persistent) {
+    console.warn('This browser cannot store data: the shop will be lost when the page is closed.');
+  }
 }
 
 export function wireServiceContext(): void {
@@ -60,9 +82,9 @@ function installSubscriptions(): void {
   const apply = () => {
     const { appearance } = useSettingsStore.getState().device;
     applyAppearance(appearance);
-    if (appearance.theme !== lastTheme && hasElectronAPI()) {
+    if (appearance.theme !== lastTheme && isDesktop()) {
       lastTheme = appearance.theme;
-      void getElectronAPI().app.setNativeTheme(appearance.theme).catch(() => undefined);
+      void getPlatformAPI().app.setNativeTheme(appearance.theme).catch(() => undefined);
     }
   };
   useSettingsStore.subscribe((state, previous) => {
@@ -101,6 +123,7 @@ function installSubscriptions(): void {
 
 /** Loads settings and applies appearance; safe before login. */
 export async function bootstrapApp(): Promise<void> {
+  await installPlatformBridge();
   installLocalDataSource();
   wireServiceContext();
   await useSettingsStore.getState().load();

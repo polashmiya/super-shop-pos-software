@@ -16,6 +16,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:web": "vite build --mode web",
+    "preview:web": "vite preview --outDir dist-web --port 5184",
     "electron": "electron .",
     "start": "vite build && electron .",
     "build:electron": "vite build && electron-builder --dir",
@@ -31,7 +33,7 @@
     "art": "node scripts/generate-product-art.mjs",
     "icons": "node scripts/generate-icon.mjs",
     "shots": "node scripts/screenshots.mjs",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "verify": "npm run typecheck && npm run lint && npm run test && npm run build && npm run build:web"
   },
   "dependencies": {
     "electron-store": "^11.0.2"
@@ -44,6 +46,7 @@
     "@fontsource-variable/noto-sans-bengali": "^5.3.0",
     "@fontsource/hind-siliguri": "^5.2.0",
     "@playwright/test": "^1.63.0",
+    "@sqlite.org/sqlite-wasm": "^3.53.4-build1",
     "@tailwindcss/vite": "^4.3.3",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.3",

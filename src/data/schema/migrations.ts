@@ -1,7 +1,11 @@
-import type { DatabaseSync } from 'node:sqlite';
+import type { SqlValue } from '@/types/database';
 
 /* ==========================================================================
    SQLite schema migrations.
+
+   Shared by both runtimes: node:sqlite in the Electron main process and
+   sqlite-wasm in the browser's database worker. The schema therefore talks
+   to a minimal structural interface (SchemaDb) instead of a concrete driver.
 
    Rules:
    - Never edit a migration that has shipped; add a new one with the next
@@ -11,6 +15,18 @@ import type { DatabaseSync } from 'node:sqlite';
    - Synchronisable entities carry created_at, updated_at, version,
      sync_status and deleted_at (soft delete) for a future backend.
    ========================================================================== */
+
+/** One prepared statement — the subset the migrations need. */
+export interface SchemaStatement {
+  get(...params: SqlValue[]): unknown;
+  run(...params: SqlValue[]): unknown;
+}
+
+/** Minimal synchronous database surface the schema needs. */
+export interface SchemaDb {
+  exec(sql: string): unknown;
+  prepare(sql: string): SchemaStatement;
+}
 
 export interface Migration {
   version: number;
@@ -610,9 +626,13 @@ export const MIGRATIONS: readonly Migration[] = [{ version: 1, name: 'initial sc
 
 export const LATEST_SCHEMA_VERSION = MIGRATIONS[MIGRATIONS.length - 1].version;
 
-/** Applies connection-level settings. Call right after opening the database. */
-export function configureConnection(db: DatabaseSync, { inMemory = false } = {}): void {
-  if (!inMemory) {
+/**
+ * Applies connection-level settings. Call right after opening the database.
+ * `wal` is off for in-memory databases (tests) and for the browser's OPFS
+ * storage, neither of which supports a write-ahead log.
+ */
+export function configureConnection(db: SchemaDb, { wal = true } = {}): void {
+  if (wal) {
     db.exec('PRAGMA journal_mode = WAL');
     db.exec('PRAGMA synchronous = NORMAL');
   }
@@ -622,7 +642,7 @@ export function configureConnection(db: DatabaseSync, { inMemory = false } = {})
   db.exec('PRAGMA cache_size = -16000');
 }
 
-export function getSchemaVersion(db: DatabaseSync): number {
+export function getSchemaVersion(db: SchemaDb): number {
   db.exec('CREATE TABLE IF NOT EXISTS schema_migrations (version INTEGER PRIMARY KEY, name TEXT NOT NULL, applied_at TEXT NOT NULL)');
   const row = db.prepare('SELECT MAX(version) AS version FROM schema_migrations').get() as { version: number | null } | undefined;
   return row?.version ?? 0;
@@ -632,7 +652,7 @@ export function getSchemaVersion(db: DatabaseSync): number {
  * Runs every pending migration inside its own transaction. Returns the
  * schema version afterwards. Throws when the database is newer than the app.
  */
-export function migrate(db: DatabaseSync): number {
+export function migrate(db: SchemaDb): number {
   let current = getSchemaVersion(db);
   if (current > LATEST_SCHEMA_VERSION) {
     throw new Error(`Database schema ${current} is newer than this application (${LATEST_SCHEMA_VERSION}).`);

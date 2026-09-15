@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react';
 import { RouterProvider } from 'react-router';
-import { MonitorX } from 'lucide-react';
-import { hasElectronAPI } from '@/platform/electron';
 import { useT } from '@/i18n';
 import { LogoMark } from '@/components/app/StoreLogo';
-import { EmptyState, ErrorState } from '@/components/ui/States';
+import { ErrorState } from '@/components/ui/States';
 import { Button } from '@/components/ui/Button';
 import { bootstrapApp } from './bootstrap';
 import { router } from './router';
 
-type Status = 'loading' | 'ready' | 'error' | 'no-desktop';
+type Status = 'loading' | 'ready' | 'error';
 
 function Splash({ label }: { label: string }) {
   return (
@@ -20,14 +18,16 @@ function Splash({ label }: { label: string }) {
   );
 }
 
-/** Application root: boots the local data source and settings, then routes. */
+/**
+ * Application root: picks the platform bridge (Electron or browser), boots
+ * the data source and settings, then routes.
+ */
 export function App() {
   const t = useT();
-  const [status, setStatus] = useState<Status>(hasElectronAPI() ? 'loading' : 'no-desktop');
+  const [status, setStatus] = useState<Status>('loading');
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (!hasElectronAPI()) return;
     let alive = true;
     bootstrapApp()
       .then(() => alive && setStatus('ready'))
@@ -40,7 +40,6 @@ export function App() {
     };
   }, [attempt]);
 
-  if (status === 'no-desktop') return <EmptyState icon={MonitorX} title={t('shell.desktopOnlyTitle')} description={t('shell.desktopOnlyMessage')} className="h-full" />;
   if (status === 'loading') return <Splash label={t('shell.starting')} />;
   if (status === 'error')
     return (

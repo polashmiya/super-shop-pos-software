@@ -10,7 +10,8 @@ import { logger } from '../main/logger';
 import { FIXED_NOW } from '../main/paths';
 import { SqlBridge } from './bridge';
 import { createSyncExecutor } from './executor';
-import { configureConnection, DATA_TABLES, getSchemaVersion, migrate } from './migrations';
+import { configureConnection, getSchemaVersion, migrate } from '@/data/schema/migrations';
+import { countRows, readAllTables as readTables, replaceAllTables as replaceTables } from '@/data/schema/tables';
 
 /* ==========================================================================
    The application's SQLite database (<userData>/data/supershop.db).
@@ -120,10 +121,7 @@ export function generateMoreDemoData(): { sales: number; customers: number } {
 
 export function getDatabaseInfo(): DatabaseInfo {
   const { db, filePath } = getDatabase();
-  const counts: Record<string, number> = {};
-  for (const table of ['products', 'customers', 'sales', 'sale_items', 'stock_movements', 'purchases', 'suppliers', 'cash_sessions', 'expenses', 'audit_logs']) {
-    counts[table] = (db.prepare(`SELECT COUNT(*) AS count FROM ${table}`).get() as { count: number }).count;
-  }
+  const counts = countRows(createSyncExecutor(db));
   let sizeBytes = 0;
   for (const suffix of ['', '-wal']) {
     try {
@@ -139,53 +137,15 @@ export function getDatabaseInfo(): DatabaseInfo {
 /** Reads every business table (backup export). */
 export function readAllTables(): Record<string, unknown[]> {
   const { db } = getDatabase();
-  const tables: Record<string, unknown[]> = {};
-  for (const table of DATA_TABLES) {
-    tables[table] = db.prepare(`SELECT * FROM ${table}`).all().map((row) => ({ ...row }));
-  }
-  return tables;
+  return readTables(createSyncExecutor(db));
 }
 
-/**
- * Replaces all business data with the given tables in one transaction
- * (backup import). Columns are taken from the live schema; unknown columns
- * are ignored, so older backups import cleanly.
- */
+/** Replaces all business data with the given tables in one transaction (backup import). */
 export function replaceAllTables(tables: Record<string, unknown[]>): void {
   const { db, bridge } = getDatabase();
-  const executor = createSyncExecutor(db);
-  db.exec('PRAGMA foreign_keys = OFF');
-  db.exec('BEGIN IMMEDIATE');
   try {
-    for (const table of [...DATA_TABLES].reverse()) db.exec(`DELETE FROM ${table}`);
-    for (const table of DATA_TABLES) {
-      const rows = tables[table];
-      if (!Array.isArray(rows) || rows.length === 0) continue;
-      const columns = (db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>).map((column) => column.name);
-      const placeholders = columns.map(() => '?').join(', ');
-      const sql = `INSERT INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`;
-      for (const row of rows) {
-        const record = row as Record<string, unknown>;
-        executor.run(
-          sql,
-          columns.map((column) => {
-            const value = record[column];
-            if (value === undefined || value === null) return null;
-            if (typeof value === 'number' || typeof value === 'string') return value;
-            if (typeof value === 'boolean') return value ? 1 : 0;
-            return JSON.stringify(value);
-          }),
-        );
-      }
-    }
-    const violations = db.prepare('PRAGMA foreign_key_check').all();
-    if (violations.length > 0) throw new Error(`Backup has ${violations.length} broken references`);
-    db.exec('COMMIT');
-  } catch (error) {
-    db.exec('ROLLBACK');
-    throw error;
+    replaceTables(createSyncExecutor(db), tables);
   } finally {
-    db.exec('PRAGMA foreign_keys = ON');
     bridge.clearCache();
   }
 }

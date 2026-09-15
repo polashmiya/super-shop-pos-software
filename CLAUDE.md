@@ -5,10 +5,17 @@ printing, data folders) is in `README.md`.
 
 ## What this is
 
-Offline-first **supermarket POS** desktop app: Electron 44 + React 19 + TypeScript 6 (strict) +
-Vite 8 + Tailwind CSS 4 + Zustand 5 + react-router 7 + SQLite (`node:sqlite`, built into Electron)
-+ electron-store. **Bangla (`bn`) is the default language**, English (`en`) the second. No
-backend and no network at runtime — every asset (fonts, product artwork, icons) is bundled.
+Offline-first **supermarket POS**: React 19 + TypeScript 6 (strict) + Vite 8 + Tailwind CSS 4 +
+Zustand 5 + react-router 7, shipping in **two runtimes from one codebase**:
+
+- **Desktop** (Electron 44) — SQLite via `node:sqlite` in the main process, electron-store,
+  silent printing. This is the product for a shop counter.
+- **Web** (`npm run build:web`) — the same app as a static site: SQLite compiled to WebAssembly
+  in a worker, stored in OPFS, `localStorage` for device settings, the browser's print dialog.
+  Data lives in that one browser; the two runtimes do **not** share a database.
+
+**Bangla (`bn`) is the default language**, English (`en`) the second. No backend and no network
+at runtime — every asset (fonts, product artwork, icons, the SQLite WASM binary) is bundled.
 
 ## Status (as of 12 Sep 2026)
 
@@ -18,13 +25,16 @@ points, split), returns and cancellations, hold/recall, customers + loyalty, inv
 ledger + adjustments, purchases (PO → GRN) + suppliers, shifts/cash drawer/expenses, dashboard,
 25 reports (print/CSV/JSON), settings centre (29 sections, search, reset), activity log, profile,
 receipts/A4 printing with preview and PDF fallback, backup/restore, demo data, Windows installer.
-Checks: `npm run verify` (271 unit tests), 10 Playwright end-to-end tests. Nothing is a stub.
+Also ships as a **browser build** with the same feature set (see "What this is").
+Checks: `npm run verify` (288 unit tests), 10 Playwright end-to-end tests. Nothing is a stub.
 
 ## Commands
 
 ```bash
 npm run dev          # Vite + Electron with hot reload (data: %APPDATA%\Super Shop POS Dev)
-npm run verify       # typecheck (3 projects) + lint + unit tests + build — run before finishing
+npm run build:web    # browser build → dist-web/ (static; deploy anywhere)
+npm run preview:web  # serve dist-web on http://localhost:5184
+npm run verify       # typecheck (3 projects) + lint + unit tests + both builds — before finishing
 npm run test         # Vitest (domain, repositories and services against in-memory SQLite)
 npm run test:e2e     # build, then Playwright drives the real Electron app (≈1 min)
 npm run dist:win     # installer → release/<version>/<productName>-Setup-<version>.exe
@@ -45,11 +55,22 @@ Sadia `4444`, Hasan `5555`.
 ```
 React UI ─► Zustand stores ─► services (src/services) ─► repository interfaces (src/repositories/types.ts)
                                                             └─► local implementation (src/repositories/local)
-                                                                  └─► SqlClient ─► preload IPC ─► main: SqlBridge ─► SQLite
+                                                                  └─► SqlClient ─► platform bridge (src/platform)
+                                                                        ├─ desktop: preload IPC ─► SqlBridge ─► node:sqlite
+                                                                        └─ web:     postMessage ─► worker ─► sqlite-wasm (OPFS)
 ```
 
-- **UI never touches SQL or Electron.** Components call services/stores; `window.electronAPI` is
-  only used in `src/platform/electron.ts`, `src/app/bootstrap.ts`, printing and data services.
+- **UI never touches SQL or Electron.** Components call services/stores; the platform bridge is
+  reached only through `src/platform` (`getPlatformAPI()`).
+- **One bridge interface, two implementations.** `ElectronAPI` (`electron/types/electron.d.ts`)
+  is the contract: the desktop's sandboxed preload script on one side, `src/platform/web` on the
+  other. `bootstrap.ts` picks one at start-up. Anything added to that interface must be
+  implemented for BOTH (TypeScript fails otherwise). Use `isDesktop()` only for what a browser
+  genuinely cannot do (name a printer, reveal the data folder, quit the process), and
+  `hasPlatform()` for "is a bridge installed".
+- **Code shared by both runtimes** lives in `src/data/schema` (migrations, SQL guard, error
+  classification, whole-table backup/restore, backup-file validation) and `src/data/seed` (the
+  demo generator, driven by a `SeedExecutor`). Never import from `electron/` inside `src/`.
 - **Repositories** are the backend boundary. A future ASP.NET Core/Node API implements the same
   interfaces (`Repositories` in `src/repositories/types.ts`) and is installed with
   `setRepositories()` — services, stores and UI stay unchanged.
@@ -75,6 +96,12 @@ React UI ─► Zustand stores ─► services (src/services) ─► repository 
 ## Map of the code
 
 ```
+src/platform/      index.ts (the bridge: getPlatformAPI, isDesktop, hasPlatform,
+                   isStoragePersistent) · web/* (browser build: db/ = sqlite-wasm worker,
+                   engine and a synchronous sha256; store.ts = localStorage; printing.ts =
+                   iframe print; data.ts = backup/restore/downloads; files.ts)
+src/data/schema/   shared by both runtimes: migrations.ts (the SQL schema) · sqlGuard.ts ·
+                   sqlErrors.ts · tables.ts (backup read/replace) · backupFile.ts
 src/config/        app.config.ts (ALL constants) · theme.config.ts (accents, fonts, sizes)
                    defaults.ts (default settings + shortcuts) · permissions.ts (permission matrix)
 src/styles/        tokens.css (ALL colours/radius/shadows/density) · index.css (Tailwind mapping,
@@ -207,11 +234,13 @@ e2e/                  Playwright: helpers.ts, app.spec.ts, pos.spec.ts, counter.
   `src/config/permissions.ts` → `settings.users.permissions.<id>` texts → guard routes/buttons
   with `useCan` and services with `requirePermission`. Existing installs keep their saved matrix;
   admins always have everything.
-- **Add an IPC channel:** name in `electron/shared/ipcChannels.ts` → handler with argument
-  validation in `electron/ipc/handlers.ts` → `electron/preload/index.ts` → type in
-  `electron/types/electron.d.ts` → call it only from a service via `getElectronAPI()`.
-- **Add a table/column:** new migration in `electron/database/migrations.ts` (never edit a shipped
-  one), bump `APP_CONFIG.database.schemaVersion`, add the table to `DATA_TABLES` (backup/restore),
+- **Add a bridge method (IPC channel):** type in `electron/types/electron.d.ts` → name in
+  `electron/shared/ipcChannels.ts` → handler with argument validation in
+  `electron/ipc/handlers.ts` → `electron/preload/index.ts` → **implement it for the browser too**
+  in `src/platform/web/*` → call it only from a service via `getPlatformAPI()`.
+- **Add a table/column:** new migration in `src/data/schema/migrations.ts` (never edit a shipped
+  one — both runtimes run these), bump `APP_CONFIG.database.schemaVersion`, add the table to
+  `DATA_TABLES` (backup/restore),
   map rows in `repositories/local/mappers.ts`, and give the demo generator something to put in it.
 - **Add a repository method:** interface in `src/repositories/types.ts`, implementation in
   `src/repositories/local/*`, expose through a service; tests use the real implementation.
@@ -233,6 +262,13 @@ e2e/                  Playwright: helpers.ts, app.spec.ts, pos.spec.ts, counter.
 
 ## Testing
 
+- **Both runtimes:** `tests/platform/webEngine.test.ts` runs the browser database engine against
+  the real sqlite-wasm binary (its Node build) and asserts the result matches `node:sqlite` seeded
+  with the same clock — every table's row count and the sales totals — plus the SQL guard,
+  transactions, rollback and a backup round-trip. `tests/platform/sha256.test.ts` checks the
+  browser's synchronous SHA-256 against `node:crypto`, so PINs hash identically in both runtimes.
+  Neither needs a browser. A test touching `node:sqlite` must start with `// @vitest-environment
+  node`, or Vite tries to bundle the built-in for jsdom and the file fails to load.
 - **Unit/integration:** `createServiceHarness()` in `tests/helpers/services.ts` gives a seeded
   in-memory database, the real local repositories and a controllable context (user, permissions,
   counter, clock) — see `tests/services/*.test.ts`. Prefer testing through services so the SQL
@@ -253,6 +289,15 @@ e2e/                  Playwright: helpers.ts, app.spec.ts, pos.spec.ts, counter.
 
 ## Gotchas
 
+- **Web build:** SQLite runs in a worker because OPFS synchronous access handles exist only
+  there (and it keeps the cashier's screen responsive while the ~10 s first-visit demo seed
+  runs). Where OPFS is unavailable (private window, older browser) the shop falls back to memory
+  for the session and the status bar shows "Not being saved" — `isStoragePersistent()`.
+  The seed generator needs a *synchronous* hasher, so the browser uses its own SHA-256
+  (`src/platform/web/db/sha256.ts`), not WebCrypto's async `digest`.
+- The web build's CSP adds `wasm-unsafe-eval` and `worker-src`; `optimizeDeps.exclude` keeps Vite
+  from pre-bundling `@sqlite.org/sqlite-wasm`, which would break its `.wasm` lookup.
+- Routing is a **hash** router, so the static web build needs no server rewrites.
 - `node:sqlite` runs only in the main process. Tests create an in-memory DB and use the same
   `SqlBridge`, so SQL is validated exactly like production (`electron/database/sqlGuard.ts`
   rejects PRAGMA/DDL/ATTACH/comments/multiple statements from the renderer).
@@ -285,7 +330,11 @@ e2e/                  Playwright: helpers.ts, app.spec.ts, pos.spec.ts, counter.
 ## Open upgrade paths (not started)
 
 - **API repositories** (`src/repositories/api/*`) + sync queue using `sync_status` — the UI and
-  services need no change; add a Settings → Sync section and wire the status-bar indicator.
+  services need no change; add a Settings → Sync section and wire the status-bar indicator. This
+  is also what would let the desktop and web runtimes share one shop instead of one database each.
+- **Web:** a service worker for true offline loading (the app works offline once loaded, but the
+  page itself is fetched from the host), and an IndexedDB snapshot fallback for browsers without
+  OPFS so those sessions persist too.
 - Multi-branch: `organizations`/`branches` tables and `branchId` filters already exist; the UI
   assumes one branch.
 - Real product photos (`product.image` accepts data URLs today via the artwork picker).

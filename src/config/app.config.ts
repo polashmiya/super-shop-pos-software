@@ -34,7 +34,7 @@ export const APP_CONFIG = {
 
   database: {
     fileName: 'supershop.db',
-    /** Bump when adding a migration in electron/database/migrations.ts. */
+    /** Bump when adding a migration in src/data/schema/migrations.ts. */
     schemaVersion: 1,
     statementCacheSize: 400,
     maxSqlLength: 20_000,

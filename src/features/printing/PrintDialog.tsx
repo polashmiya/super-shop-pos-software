@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { FileDown, Printer } from 'lucide-react';
 import { useAsync } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
-import { getElectronAPI, hasElectronAPI } from '@/platform/electron';
+import { getPlatformAPI, hasPlatform } from '@/platform';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { toast } from '@/stores/uiStore';
 import { Button } from '@/components/ui/Button';
@@ -25,7 +25,7 @@ function PrintDialogContent() {
   const t = useT();
   const request = usePrintStore((state) => state.request);
   const printer = useSettingsStore((state) => state.device.printer);
-  const printers = useAsync(() => (hasElectronAPI() ? getElectronAPI().printer.getPrinters() : Promise.resolve([])), []);
+  const printers = useAsync(() => (hasPlatform() ? getPlatformAPI().printer.getPrinters() : Promise.resolve([])), []);
   const defaultName = request?.page === 'a4' ? printer.a4Printer || printer.reportPrinter : printer.receiptPrinter;
   const [printerName, setPrinterName] = useState(defaultName);
   const [copies, setCopies] = useState(request?.kind === 'receipt' ? printer.copies : 1);

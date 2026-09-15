@@ -2,7 +2,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { toLocalDate } from '@/domain/dates';
 import { t } from '@/i18n';
-import { getElectronAPI, hasElectronAPI } from '@/platform/electron';
+import { getPlatformAPI, hasPlatform } from '@/platform';
 import { repos } from '@/repositories';
 import { useCatalogStore } from '@/stores/catalogStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -136,7 +136,7 @@ export async function buildReportDocument(props: Omit<ReportDocumentProps, 'stor
 
 /** Sends a document straight to the printer (settings printer + copies unless overridden). */
 export async function sendToPrinter(request: PrintRequest, overrides: { printerName?: string; copies?: number } = {}): Promise<PrintResult> {
-  if (!hasElectronAPI()) return { outcome: 'failed', failure: 'error', reason: 'desktop only' };
+  if (!hasPlatform()) return { outcome: 'failed', failure: 'error', reason: 'no platform bridge' };
   const { printer } = useSettingsStore.getState().device;
   const printerName = overrides.printerName ?? (request.page === 'a4' ? printer.a4Printer || printer.reportPrinter : printer.receiptPrinter);
   const options = {
@@ -147,7 +147,7 @@ export async function sendToPrinter(request: PrintRequest, overrides: { printerN
     title: request.title,
     landscape: request.landscape,
   };
-  const api = getElectronAPI().printer;
+  const api = getPlatformAPI().printer;
   try {
     return request.kind === 'receipt' ? await api.printReceipt(request.html, options) : await api.printReport(request.html, options);
   } catch (error) {
@@ -157,7 +157,7 @@ export async function sendToPrinter(request: PrintRequest, overrides: { printerN
 }
 
 export async function saveAsPdf(request: PrintRequest) {
-  return getElectronAPI().printer.savePdf(request.html, { fileName: request.fileName, paperWidth: request.paperWidth, page: request.page, landscape: request.landscape });
+  return getPlatformAPI().printer.savePdf(request.html, { fileName: request.fileName, paperWidth: request.paperWidth, page: request.page, landscape: request.landscape });
 }
 
 /** Opens the in-app print preview; resolves with the result (null when closed without printing). */
@@ -188,9 +188,9 @@ export function printResultMessage(result: PrintResult): string {
 
 /** Printers installed on this computer (empty outside the desktop app or when listing fails). */
 export async function listPrinters(): Promise<PrinterInfo[]> {
-  if (!hasElectronAPI()) return [];
+  if (!hasPlatform()) return [];
   try {
-    return await getElectronAPI().printer.getPrinters();
+    return await getPlatformAPI().printer.getPrinters();
   } catch (error) {
     console.error('Listing printers failed', error);
     return [];

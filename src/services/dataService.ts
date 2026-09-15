@@ -1,4 +1,4 @@
-import { getElectronAPI } from '@/platform/electron';
+import { getPlatformAPI } from '@/platform';
 import type { AppInfo, DatabaseInfo, ExportResult, ImportPickResult, SaveFileKind } from '@/types';
 import { requirePermission } from './context';
 
@@ -10,42 +10,42 @@ import { requirePermission } from './context';
 export const dataService = {
   exportBackup(): Promise<ExportResult> {
     requirePermission('data.manage');
-    return getElectronAPI().data.exportBackup();
+    return getPlatformAPI().data.exportBackup();
   },
   pickImport(): Promise<ImportPickResult> {
     requirePermission('data.manage');
-    return getElectronAPI().data.pickImport();
+    return getPlatformAPI().data.pickImport();
   },
   applyImport(token: string) {
     requirePermission('data.manage');
-    return getElectronAPI().data.applyImport(token);
+    return getPlatformAPI().data.applyImport(token);
   },
   resetDemo() {
     requirePermission('data.manage');
-    return getElectronAPI().data.resetDemo();
+    return getPlatformAPI().data.resetDemo();
   },
   generateMore() {
     requirePermission('data.manage');
-    return getElectronAPI().data.generateMore();
+    return getPlatformAPI().data.generateMore();
   },
   clearLocal() {
     requirePermission('data.manage');
-    return getElectronAPI().data.clearLocal();
+    return getPlatformAPI().data.clearLocal();
   },
   /** Saves CSV/JSON exports where the user chooses. */
   saveFile(fileName: string, content: string, kind: SaveFileKind): Promise<ExportResult> {
-    return getElectronAPI().data.saveFile(fileName, content, kind);
+    return getPlatformAPI().data.saveFile(fileName, content, kind);
   },
   databaseInfo(): Promise<DatabaseInfo> {
-    return getElectronAPI().database.info();
+    return getPlatformAPI().database.info();
   },
   appInfo(): Promise<AppInfo> {
-    return getElectronAPI().app.getInfo();
+    return getPlatformAPI().app.getInfo();
   },
   openDataFolder(): Promise<void> {
-    return getElectronAPI().app.openDataFolder();
+    return getPlatformAPI().app.openDataFolder();
   },
   relaunch(): Promise<void> {
-    return getElectronAPI().app.relaunch();
+    return getPlatformAPI().app.relaunch();
   },
 };

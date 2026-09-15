@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Printer, RefreshCw, ScrollText, Settings2 } from 'lucide-react';
 import { useAsync } from '@/hooks/useAsync';
 import { useT } from '@/i18n';
-import { hasElectronAPI } from '@/platform/electron';
+import { isDesktop } from '@/platform';
 import { toast } from '@/stores/uiStore';
 import type { PaperWidth, PrinterInfo } from '@/types';
 import { Button } from '@/components/ui/Button';
@@ -18,7 +18,7 @@ const PAPERS: PaperWidth[] = ['80mm', '58mm'];
 export default function PrinterSection() {
   const t = useT();
   const printer = useDeviceGroup('printer');
-  const desktop = hasElectronAPI();
+  const desktop = isDesktop();
   const printers = useAsync(() => listPrinters(), []);
   const [testing, setTesting] = useState(false);
   // autoPrint is the older combined flag (silent + after every sale); it is folded into the two switches below.
@@ -77,7 +77,7 @@ export default function PrinterSection() {
         </SettingRow>
         {(!desktop || (printers.data && printers.data.length === 0)) && (
           <SettingBlock>
-            <Note tone="warning">{desktop ? t('settings.printer.noPrinters') : t('settings.printer.desktopOnly')}</Note>
+            <Note tone="warning">{desktop ? t('settings.printer.noPrinters') : t('settings.printer.browserPrinting')}</Note>
           </SettingBlock>
         )}
       </SettingsCard>

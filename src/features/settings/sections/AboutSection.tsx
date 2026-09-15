@@ -3,7 +3,7 @@ import { APP_CONFIG } from '@/config/app.config';
 import { useAsync } from '@/hooks/useAsync';
 import { useFormat } from '@/hooks/useFormat';
 import { useLanguage, useT, type TranslationKey } from '@/i18n';
-import { hasElectronAPI } from '@/platform/electron';
+import { hasPlatform, isDesktop } from '@/platform';
 import { dataService } from '@/services/dataService';
 import { useCan } from '@/stores/authStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -33,7 +33,8 @@ export default function AboutSection() {
   const t = useT();
   const format = useFormat();
   const language = useLanguage();
-  const desktop = hasElectronAPI();
+  const desktop = hasPlatform();
+  const native = isDesktop();
   const canManageData = useCan('data.manage');
   const store = useSettingsStore((state) => state.business.store);
   const info = useAsync(() => (desktop ? dataService.appInfo() : Promise.resolve(null)), [desktop]);
@@ -81,8 +82,8 @@ export default function AboutSection() {
 
       <SettingsCard icon={HardDrive} title={t('settings.about.dataFolder')} description={t('settings.about.dataFolderHint')}>
         <SettingRow anchor="dataFolder" label={t('settings.about.location')} description={<span className="selectable break-all font-mono text-[0.8rem]">{data?.userDataPath ?? '—'}</span>}>
-          {canManageData && (
-            <Button icon={FolderOpen} disabled={!desktop} onClick={() => void dataService.openDataFolder().catch((error: unknown) => toast.fromError(error))}>
+          {canManageData && native && (
+            <Button icon={FolderOpen} onClick={() => void dataService.openDataFolder().catch((error: unknown) => toast.fromError(error))}>
               {t('settings.about.openFolder')}
             </Button>
           )}

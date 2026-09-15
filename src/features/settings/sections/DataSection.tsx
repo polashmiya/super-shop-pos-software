@@ -4,7 +4,7 @@ import { refreshWorkspace } from '@/app/bootstrap';
 import { useAsync } from '@/hooks/useAsync';
 import { useFormat } from '@/hooks/useFormat';
 import { useT, type TranslationKey } from '@/i18n';
-import { hasElectronAPI } from '@/platform/electron';
+import { hasPlatform, isDesktop } from '@/platform';
 import { auditService } from '@/services/auditService';
 import { dataService } from '@/services/dataService';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -12,7 +12,7 @@ import { confirmAction, toast } from '@/stores/uiStore';
 import { Button } from '@/components/ui/Button';
 import { DefinitionList } from '@/components/ui/Display';
 import { Skeleton } from '@/components/ui/States';
-import { Note, SettingBlock, SettingRow, SettingsCard } from '../components/SettingsCard';
+import { SettingBlock, SettingRow, SettingsCard } from '../components/SettingsCard';
 
 type Busy = 'backup' | 'import' | 'reset' | 'more' | 'clear' | null;
 
@@ -26,7 +26,8 @@ function fileName(path: string | undefined): string {
 export default function DataSection() {
   const t = useT();
   const format = useFormat();
-  const desktop = hasElectronAPI();
+  const desktop = hasPlatform();
+  const native = isDesktop();
   const lastBackupAt = useSettingsStore((state) => state.session.lastBackupAt);
   const info = useAsync(() => (desktop ? dataService.databaseInfo() : Promise.resolve(null)), [desktop]);
   const [busy, setBusy] = useState<Busy>(null);
@@ -127,16 +128,18 @@ export default function DataSection() {
 
   return (
     <div className="flex flex-col gap-5">
-      {!desktop && <Note tone="warning">{t('settings.ui.desktopOnly')}</Note>}
+
 
       <SettingsCard
         icon={Database}
         title={t('settings.data.database')}
         description={t('settings.data.databaseHint')}
         action={
-          <Button size="sm" variant="ghost" icon={FolderOpen} disabled={!desktop} onClick={() => void dataService.openDataFolder().catch((error: unknown) => toast.fromError(error))}>
-            {t('settings.data.openFolder')}
-          </Button>
+          native && (
+            <Button size="sm" variant="ghost" icon={FolderOpen} onClick={() => void dataService.openDataFolder().catch((error: unknown) => toast.fromError(error))}>
+              {t('settings.data.openFolder')}
+            </Button>
+          )
         }
       >
         <SettingBlock anchor="databaseInfo">

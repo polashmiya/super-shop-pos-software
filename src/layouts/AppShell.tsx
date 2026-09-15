@@ -6,7 +6,7 @@ import { firesWhileTyping, GLOBAL_ACTIONS, matchShortcut } from '@/app/shortcuts
 import { refreshNotifications, refreshWorkspace } from '@/app/bootstrap';
 import { isEditableTarget } from '@/hooks/useCommon';
 import { useT } from '@/i18n';
-import { getElectronAPI, hasElectronAPI } from '@/platform/electron';
+import { getPlatformAPI, hasPlatform } from '@/platform';
 import { useAuthStore } from '@/stores/authStore';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { toast, useUiStore } from '@/stores/uiStore';
@@ -44,7 +44,7 @@ function useGlobalShortcuts(): void {
           ui.setShortcutsOpen(!ui.shortcutsOpen);
           break;
         case 'fullscreen':
-          if (hasElectronAPI()) void getElectronAPI().app.toggleFullscreen();
+          if (hasPlatform()) void getPlatformAPI().app.toggleFullscreen();
           break;
         case 'refresh':
           void refreshWorkspace().then(() => toast.info('shell.refreshed'));

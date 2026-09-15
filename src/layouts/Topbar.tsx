@@ -5,7 +5,7 @@ import { displayCombo } from '@/app/shortcuts';
 import { useNow } from '@/hooks/useCommon';
 import { useFormat } from '@/hooks/useFormat';
 import { useT } from '@/i18n';
-import { getElectronAPI, hasElectronAPI } from '@/platform/electron';
+import { getPlatformAPI, hasPlatform } from '@/platform';
 import { useAuthStore } from '@/stores/authStore';
 import { useNotificationStore } from '@/stores/notificationStore';
 import { useSettingsStore } from '@/stores/settingsStore';
@@ -106,7 +106,7 @@ export function Topbar({ onToggleSidebar, sidebarHidden }: { onToggleSidebar: ()
           aria-pressed={focusMode}
           onClick={() => updateDevice({ appearance: { focusMode: !focusMode } })}
         />
-        {hasElectronAPI() && <IconButton icon={Maximize} label={t('shell.topbar.fullscreen')} shortcut={displayCombo(shortcuts.fullscreen)} onClick={() => void getElectronAPI().app.toggleFullscreen()} />}
+        {hasPlatform() && <IconButton icon={Maximize} label={t('shell.topbar.fullscreen')} shortcut={displayCombo(shortcuts.fullscreen)} onClick={() => void getPlatformAPI().app.toggleFullscreen()} />}
         <IconButton icon={Bell} label={t('shell.topbar.notifications')} badge={unread > 0 ? (unread > 9 ? '9+' : unread) : null} onClick={() => setNotificationsOpen(true)} />
 
         {user && (
