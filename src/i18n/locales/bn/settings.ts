@@ -20,7 +20,7 @@ export const settings: DeepStringify<typeof en> = {
   sections: {
     general: { title: 'সাধারণ', description: 'চালু হওয়া, সেশন ও স্ক্রিনের আচরণ' },
     store: { title: 'দোকান', description: 'নাম, ঠিকানা, লোগো ও রসিদের লেখা' },
-    pos: { title: 'পিওএস', description: 'স্ক্যানিং, কার্ট ও পণ্য গ্রিডের আচরণ' },
+    pos: { title: 'পস', description: 'স্ক্যানিং, কার্ট ও পণ্য গ্রিডের আচরণ' },
     appearance: { title: 'চেহারা', description: 'প্রধান রং, ঘনত্ব, কোণ ও ইফেক্ট' },
     theme: { title: 'থিম', description: 'ডার্ক, লাইট অথবা সিস্টেম অনুযায়ী' },
     language: { title: 'ভাষা', description: 'বাংলা বা ইংরেজি' },
@@ -77,7 +77,7 @@ export const settings: DeepStringify<typeof en> = {
     startupHint: 'এই টার্মিনালে স্টাফ সাইন ইন করলে কী হবে',
     landingPage: 'সাইন ইনের পর প্রথম স্ক্রিন',
     landingPageHint: 'যাদের এই স্ক্রিনের অনুমতি নেই, তারা অনুমোদিত প্রথম পাতায় যাবেন।',
-    landing: { auto: 'স্বয়ংক্রিয় (ক্যাশিয়ারের জন্য পিওএস)', pos: 'পিওএস', dashboard: 'ড্যাশবোর্ড', sales: 'বিক্রয়', products: 'পণ্য', reports: 'রিপোর্ট' },
+    landing: { auto: 'স্বয়ংক্রিয় (ক্যাশিয়ারের জন্য পস)', pos: 'পস', dashboard: 'ড্যাশবোর্ড', sales: 'বিক্রয়', products: 'পণ্য', reports: 'রিপোর্ট' },
     confirmExit: 'অ্যাপ বন্ধের আগে জিজ্ঞেস করুন',
     confirmExitHint: 'বিক্রয়ের মাঝখানে ভুল করে উইন্ডো বন্ধ হওয়া ঠেকায়।',
     screen: 'স্ক্রিন',
@@ -87,10 +87,10 @@ export const settings: DeepStringify<typeof en> = {
     focusMode: 'ক্যাশিয়ার ফোকাস মোড',
     focusModeHint: 'বড় সার্চ, কার্ট ও পেমেন্ট বাটন, কম বিক্ষেপ।',
     resetTerminal: 'এই টার্মিনাল রিসেট',
-    resetTerminalHint: 'এই কম্পিউটারের চেহারা, ভাষা, পিওএস, প্রিন্টার, শব্দ ও শর্টকাট সেটিংস ডিফল্টে ফিরিয়ে আনে। দোকানের সেটিংস ও কাউন্টার সংযোগ অপরিবর্তিত থাকে।',
+    resetTerminalHint: 'এই কম্পিউটারের চেহারা, ভাষা, পস, প্রিন্টার, শব্দ ও শর্টকাট সেটিংস ডিফল্টে ফিরিয়ে আনে। দোকানের সেটিংস ও কাউন্টার সংযোগ অপরিবর্তিত থাকে।',
     resetTerminalAction: 'টার্মিনালের সেটিংস রিসেট করুন',
     resetTerminalConfirm: 'এই টার্মিনালের সব সেটিংস রিসেট করবেন?',
-    resetTerminalMessage: 'চেহারা, ভাষা, পিওএস, প্রিন্টার, শব্দ ও শর্টকাট সেটিংস ডিফল্টে ফিরে যাবে। বিক্রয়, পণ্য, গ্রাহক ও দোকানের সেটিংস প্রভাবিত হবে না।',
+    resetTerminalMessage: 'চেহারা, ভাষা, পস, প্রিন্টার, শব্দ ও শর্টকাট সেটিংস ডিফল্টে ফিরে যাবে। বিক্রয়, পণ্য, গ্রাহক ও দোকানের সেটিংস প্রভাবিত হবে না।',
   },
   store: {
     identity: 'দোকানের নাম ও ঠিকানা',
@@ -166,7 +166,7 @@ export const settings: DeepStringify<typeof en> = {
     duplicateQty: 'একই পণ্য আবার স্ক্যান করলে পরিমাণ বাড়বে',
     quickCheckout: 'খালি স্ক্যান বক্সে এন্টার চাপলে পেমেন্ট খুলবে',
     grid: 'পণ্য গ্রিড',
-    gridHint: 'পিওএস স্ক্রিনের পণ্য কার্ড',
+    gridHint: 'পস স্ক্রিনের পণ্য কার্ড',
     showImages: 'পণ্যের ছবি দেখান',
     showImagesHint: 'ধীরগতির কম্পিউটারে দ্রুততম গ্রিডের জন্য বন্ধ রাখুন।',
     cardSize: 'কার্ডের আকার',
@@ -217,7 +217,7 @@ export const settings: DeepStringify<typeof en> = {
     focusMode: 'ক্যাশিয়ার ফোকাস মোড',
     focusModeHint: 'বড় সার্চ, কার্ট ও পেমেন্ট বাটন, কম বিক্ষেপ।',
     textSize: 'লেখার আকার',
-    textSizeHint: 'পিওএস স্ক্রিনসহ পুরো অ্যাপ বড়-ছোট হয়।',
+    textSizeHint: 'পস স্ক্রিনসহ পুরো অ্যাপ বড়-ছোট হয়।',
   },
   theme: {
     mode: 'মোড',
@@ -246,7 +246,7 @@ export const settings: DeepStringify<typeof en> = {
     receiptHint: 'রসিদের প্রিভিউ ও স্ক্রিনে দেখানো রসিদ। প্রিন্ট করা রসিদে সবসময় বাংলা ফন্ট যুক্ত থাকে, তাই যেকোনো প্রিন্টারে সঠিকভাবে ছাপা হয়।',
     offline: 'অ্যাপের সাথে যুক্ত — অফলাইনে চলে',
     systemFont: 'এই কম্পিউটারে ইনস্টল করা',
-    sizeHint: 'পিওএস স্ক্রিনসহ পুরো অ্যাপ বড়-ছোট হয়।',
+    sizeHint: 'পস স্ক্রিনসহ পুরো অ্যাপ বড়-ছোট হয়।',
   },
   language: {
     interface: 'ইন্টারফেসের ভাষা',
@@ -413,7 +413,7 @@ export const settings: DeepStringify<typeof en> = {
   },
   products: {
     images: 'পণ্যের ছবি',
-    imagesHint: 'পিওএস পণ্য কার্ডের ছবি',
+    imagesHint: 'পস পণ্য কার্ডের ছবি',
     showImages: 'পণ্যের ছবি দেখান',
     showImagesHint: 'ডিফল্টভাবে চালু। দ্রুত, শুধু লেখার গ্রিডের জন্য বন্ধ করুন।',
     imageSize: 'ছবির আকার',
@@ -584,7 +584,7 @@ export const settings: DeepStringify<typeof en> = {
   shortcuts: {
     global: 'অ্যাপের যেকোনো জায়গায়',
     globalHint: 'সব স্ক্রিনে কাজ করে',
-    pos: 'পিওএস স্ক্রিনে',
+    pos: 'পস স্ক্রিনে',
     posHint: 'শুধু বিক্রির সময়',
     change: 'পরিবর্তন',
     changeLabel: '{action}-এর শর্টকাট পরিবর্তন',
@@ -741,7 +741,7 @@ export const settings: DeepStringify<typeof en> = {
     permission: 'অনুমতি',
     permissionFor: '{role}: {permission}',
     permissionGroups: {
-      pos: 'পিওএস',
+      pos: 'পস',
       sales: 'বিক্রয়',
       catalog: 'পণ্য',
       inventory: 'ইনভেন্টরি',
@@ -753,7 +753,7 @@ export const settings: DeepStringify<typeof en> = {
     },
     permissions: {
       'dashboard.view': 'ড্যাশবোর্ড দেখা',
-      'pos.sell': 'পিওএসে বিক্রি',
+      'pos.sell': 'পসে বিক্রি',
       'pos.hold': 'বিক্রয় হোল্ড ও রিকল',
       'pos.discount': 'ছাড় দেওয়া',
       'pos.priceOverride': 'কাউন্টারে দাম পরিবর্তন',

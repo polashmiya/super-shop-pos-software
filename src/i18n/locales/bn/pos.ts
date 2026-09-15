@@ -1,9 +1,9 @@
 import type { DeepStringify } from '../../types';
 import type { pos as enPos, print as enPrint, receipt as enReceipt } from '../en/pos';
 
-/** পিওএস স্ক্রিন, কার্ট, পেমেন্ট, রসিদ ও প্রিন্ট। */
+/** পস স্ক্রিন, কার্ট, পেমেন্ট, রসিদ ও প্রিন্ট। */
 export const pos: DeepStringify<typeof enPos> = {
-  title: 'পিওএস',
+  title: 'পস',
   scanPlaceholder: 'বারকোড স্ক্যান করুন অথবা নাম, এসকেইউ, ব্র্যান্ড দিয়ে খুঁজুন…',
   scanLabel: 'বারকোড স্ক্যান বা পণ্য খুঁজুন',
   scanning: 'স্ক্যানার প্রস্তুত',
@@ -298,7 +298,7 @@ export const receipt: DeepStringify<typeof enReceipt> = {
   items: 'পণ্য: {count}  পরিমাণ: {qty}',
   reprint: '*** পুনঃপ্রিন্ট ***',
   thankYou: 'ধন্যবাদ!',
-  poweredBy: 'সুপার শপ পিওএস',
+  poweredBy: 'সুপার শপ পস',
   testTitle: 'টেস্ট প্রিন্ট',
   testLine: 'এই লেখা পড়া গেলে প্রিন্টার ঠিক আছে।',
   returnTitle: 'ফেরত রসিদ',

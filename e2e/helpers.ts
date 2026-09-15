@@ -75,7 +75,7 @@ export async function login(page: Page, user: keyof typeof USER_TILES = 'karim')
   await expect(pinField).toBeAttached();
   await page.keyboard.type(PINS[user]);
   await page.keyboard.press('Enter');
-  const welcome = page.getByRole('button', { name: /পিওএস-এ যান|Go to POS/ });
+  const welcome = page.getByRole('button', { name: /পসে যান|Go to POS/ });
   await Promise.race([welcome.waitFor({ timeout: 8_000 }).then(() => welcome.click()), page.waitForURL(/#\/(pos|dashboard)/, { timeout: 8_000 })]).catch(() => undefined);
   await page.waitForURL(/#\/(pos|dashboard)/);
 }

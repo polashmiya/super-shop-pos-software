@@ -35,7 +35,7 @@ async function signIn(page) {
   if (!(await pin.isVisible())) await tile.click();
   await page.keyboard.type('1111');
   await page.keyboard.press('Enter');
-  const welcome = page.getByRole('button', { name: /পিওএস-এ যান|Go to POS/ });
+  const welcome = page.getByRole('button', { name: /পসে যান|Go to POS/ });
   await Promise.race([welcome.waitFor({ timeout: 8_000 }).then(() => welcome.click()), page.waitForURL(/#\/(pos|dashboard)/, { timeout: 8_000 })]).catch(() => undefined);
   await page.waitForURL(/#\/(pos|dashboard)/);
 }

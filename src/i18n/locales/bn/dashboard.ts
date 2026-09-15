@@ -116,7 +116,7 @@ export const dashboard: DeepStringify<typeof en> = {
   quick: {
     title: 'দ্রুত কাজ',
     newSale: 'নতুন বিক্রয়',
-    newSaleHint: 'পিওএস খুলে বিক্রি শুরু করুন',
+    newSaleHint: 'পস খুলে বিক্রি শুরু করুন',
     addProduct: 'পণ্য যোগ করুন',
     addProductHint: 'দাম ও স্টকসহ নতুন পণ্য তৈরি করুন',
     receive: 'ক্রয়কৃত পণ্য গ্রহণ',

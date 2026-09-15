@@ -4,7 +4,7 @@ import type { auth as enAuth, nav as enNav, onboarding as enOnboarding, shell as
 export const nav: DeepStringify<typeof enNav> = {
   groups: { selling: 'বিক্রয়', stock: 'স্টক', people: 'মানুষ', money: 'টাকা-পয়সা', insights: 'বিশ্লেষণ', system: 'সিস্টেম' },
   dashboard: 'ড্যাশবোর্ড',
-  pos: 'পিওএস',
+  pos: 'পস',
   sales: 'বিক্রয়',
   returns: 'ফেরত',
   products: 'পণ্য',
@@ -99,7 +99,7 @@ export const shell: DeepStringify<typeof enShell> = {
     title: 'কীবোর্ড শর্টকাট',
     subtitle: 'কাউন্টারে দ্রুত কাজ করুন। টেক্সট বক্সে লেখার সময় শর্টকাট কাজ করে না (ফাংশন কী ছাড়া)।',
     actions: {
-      goPos: 'পিওএস খুলুন',
+      goPos: 'পস খুলুন',
       goProducts: 'পণ্য',
       goSales: 'বিক্রয়',
       goCustomers: 'গ্রাহক',
@@ -127,17 +127,17 @@ export const shell: DeepStringify<typeof enShell> = {
     title: 'এই পর্দায় একটি সমস্যা হয়েছে',
     message: 'অ্যাপের বাকি অংশ ঠিকভাবে চলছে, কোনো তথ্য হারায়নি।',
     reload: 'পর্দা আবার লোড করুন',
-    goPos: 'পিওএস-এ ফিরে যান',
+    goPos: 'পসে ফিরে যান',
   },
   exit: {
-    title: 'সুপার শপ পিওএস বন্ধ করবেন?',
+    title: 'সুপার শপ পস বন্ধ করবেন?',
     message: 'বিক্রয় ও সেটিংস আগেই সংরক্ষিত হয়েছে। চলমান কার্টটি অ্যাপ আবার খুললে ফিরে আসবে।',
     confirm: 'অ্যাপ বন্ধ করুন',
   },
   refreshed: 'তথ্য রিফ্রেশ হয়েছে',
   desktopOnlyTitle: 'ডেস্কটপ অ্যাপ প্রয়োজন',
-  desktopOnlyMessage: 'অনুগ্রহ করে ডেস্কটপ অ্যাপ্লিকেশন থেকে সুপার শপ পিওএস খুলুন।',
-  starting: 'সুপার শপ পিওএস চালু হচ্ছে…',
+  desktopOnlyMessage: 'অনুগ্রহ করে ডেস্কটপ অ্যাপ্লিকেশন থেকে সুপার শপ পস খুলুন।',
+  starting: 'সুপার শপ পস চালু হচ্ছে…',
 };
 
 export const auth: DeepStringify<typeof enAuth> = {
@@ -166,7 +166,7 @@ export const auth: DeepStringify<typeof enAuth> = {
 };
 
 export const onboarding: DeepStringify<typeof enOnboarding> = {
-  title: 'সুপার শপ পিওএস-এ স্বাগতম',
+  title: 'সুপার শপ পসে স্বাগতম',
   subtitle: 'আপনার দোকান প্রস্তুত। আমরা যা যা সেট করেছি:',
   store: 'দোকান',
   defaults: 'ডিফল্ট সেটিংস',
@@ -181,7 +181,7 @@ export const onboarding: DeepStringify<typeof enOnboarding> = {
   demoSales: 'বাস্তবসম্মত রিপোর্টের জন্য {count}টি পুরোনো বিক্রয়',
   demoCounters: '{count}টি কাউন্টার ও স্টাফ অ্যাকাউন্ট',
   changeLater: 'পরে সেটিংস থেকে সবকিছু পরিবর্তন করা যাবে।',
-  goToPos: 'পিওএস-এ যান',
+  goToPos: 'পসে যান',
   skip: 'এড়িয়ে যান',
   offline: 'সব তথ্য এই কম্পিউটারেই থাকে। ইন্টারনেট লাগে না।',
 };

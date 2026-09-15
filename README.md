@@ -5,7 +5,7 @@ codebase: as a **desktop app** for Windows, macOS and Linux, and as a **web app*
 a browser. Bangla is the default language (English is one click away), everything runs on the
 shop's own machine with a local SQLite database, and no internet connection is ever needed.
 
-> বাংলা: এটি একটি সম্পূর্ণ অফলাইন সুপারশপ পিওএস সফটওয়্যার। বারকোড স্ক্যান করে বিক্রি, ভ্যাট,
+> বাংলা: এটি একটি সম্পূর্ণ অফলাইন সুপারশপ পস সফটওয়্যার। বারকোড স্ক্যান করে বিক্রি, ভ্যাট,
 > নগদ/কার্ড/বিকাশ/নগদ/রকেট পেমেন্ট, রিটার্ন, স্টক, ক্রয়, সরবরাহকারী, শিফট ও ক্যাশ, খরচ,
 > রিপোর্ট ও রসিদ প্রিন্ট — সব এক জায়গায়। নিচের ডেমো পিন দিয়ে লগইন করুন।
 
